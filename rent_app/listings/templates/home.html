@@ -1,0 +1,93 @@
+<!-- listings/templates/home.html -->
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    {% load static %}
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Encuentra un lugar para ti</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 0; padding: 0; }
+        .header { display: flex; justify-content: space-between; align-items: center; padding: 10px 20px; background-color: #f4f4f4; }
+        .filters { display: flex; justify-content: center; gap: 20px; padding: 20px; }
+        .listings { display: flex; gap: 20px; flex-wrap: wrap; justify-content: center; padding: 20px; background-color: #f9f1e9; }
+        .listing { border: 1px solid #ddd; border-radius: 8px; overflow: hidden; width: 200px; }
+        .listing img { width: 100%; height: auto; }
+        .listing-info { padding: 10px; text-align: center; }
+        
+        /* Estilos para los mensajes */
+        .messages { margin: 10px 20px; }
+        .message { padding: 10px; border-radius: 4px; margin-bottom: 10px; font-weight: bold; }
+        .message.success { background-color: #d4edda; color: #155724; border: 1px solid #c3e6cb; }
+        .message.error { background-color: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <img src="{% static 'logo.png' %}" alt="Logo" height="40">
+        <button>Publicar</button>
+        {% if user.is_authenticated %}
+        <a href="{% url 'perfil' %}" class="user-icon">👤</a>  <!-- Redirige a la página de perfil -->
+        {% else %}
+        <a href="{% url 'login' %}" class="user-icon">👤</a>  <!-- Redirige a la página de inicio de sesión si no está autenticado -->
+        {% endif %}
+        
+    </div>
+
+    <!-- Bloque para mostrar mensajes de Django -->
+    {% if messages %}
+        <div class="messages">
+            {% for message in messages %}
+                <div class="message {{ message.tags }}">{{ message }}</div>
+            {% endfor %}
+        </div>
+    {% endif %}
+
+    <div class="filters">
+        <select id="tipo-filtro" onchange="filtrar()">
+            <option value="" {% if not request.GET.tipo %}selected{% endif %}>Tipo</option>
+            <option value="APARTMENT" {% if request.GET.tipo == "APARTMENT" %}selected{% endif %}>Apartamento</option>
+            <option value="HOUSE" {% if request.GET.tipo == "HOUSE" %}selected{% endif %}>Casa</option>
+            <option value="ROOM" {% if request.GET.tipo == "ROOM" %}selected{% endif %}>Cuarto</option>
+        </select>
+        
+        <select id="costo-filtro" onchange="filtrar()">
+            <option value="" {% if not request.GET.costo %}selected{% endif %}>Costo</option>
+            <option value="1000-3000" {% if request.GET.costo == "1000-3000" %}selected{% endif %}>1,000 - 3,000</option>
+            <option value="3000-5000" {% if request.GET.costo == "3000-5000" %}selected{% endif %}>3,000 - 5,000</option>
+            <option value="5000-10000" {% if request.GET.costo == "5000-10000" %}selected{% endif %}>5,000 - 10,000</option>
+        </select>
+        
+        <select id="distancia-filtro" onchange="filtrar()">
+            <option value="" {% if not request.GET.distancia %}selected{% endif %}>Distancia</option>
+            <option value="0-5" {% if request.GET.distancia == "0-5" %}selected{% endif %}>0 km - 5 km</option>
+            <option value="5-10" {% if request.GET.distancia == "5-10" %}selected{% endif %}>5 km - 10 km</option>
+            <option value="10-15" {% if request.GET.distancia == "10-15" %}selected{% endif %}>10 km - 15 km</option>
+        </select>
+    </div>
+    <h2 style="text-align:center;">Encuentra un lugar para ti</h2>
+    <div class="listings">
+        {% for listing in listings %}
+        <div class="listing">
+            <img src="{{ listing.image.url }}" alt="{{ listing.title }}">
+            <div class="listing-info">
+                <h3>{{ listing.property_type }}</h3>
+                <p>MXN {{ listing.price }}</p>
+                <p>A {{ listing.distance }} km</p>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+
+    <script>
+        function filtrar() {
+            const tipo = document.getElementById('tipo-filtro').value;
+            const costo = document.getElementById('costo-filtro').value;
+            const distancia = document.getElementById('distancia-filtro').value;
+
+            let url = `?tipo=${tipo}&costo=${costo}&distancia=${distancia}`;
+            window.location.href = url;
+        }
+    </script>
+</body>
+</html>
