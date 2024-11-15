@@ -8,8 +8,11 @@ from django.shortcuts import render, redirect
 from django.contrib.auth.forms import AuthenticationForm
 from .forms import CustomUserCreationForm, EmailAuthenticationForm
 from django.contrib.auth.decorators import login_required
+from .forms import InmuebleForm, ImagenInmuebleForm
+from .models import ImagenInmueble
 
 def home(request):
+    
     return render(request, 'home.html')
 
 class RegisterView(CreateView):
@@ -63,3 +66,27 @@ def editar_perfil(request):
 def mis_inmuebles(request):
     # Puedes agregar lógica aquí para obtener los inmuebles del usuario si tienes un modelo de inmuebles
     return render(request, 'mis_inmuebles.html')
+
+
+@login_required
+def publicar_inmueble(request):
+    if request.method == 'POST':
+        inmueble_form = InmuebleForm(request.POST)
+        imagen_form = ImagenInmuebleForm(request.POST, request.FILES)
+
+        if inmueble_form.is_valid() and imagen_form.is_valid():
+            inmueble = inmueble_form.save(commit=False)
+            inmueble.usuario = request.user
+            inmueble.save()
+
+            # Guardar cada imagen en el modelo de imágenes usando getlist
+            for imagen in request.FILES.getlist('imagenes'):
+                ImagenInmueble.objects.create(inmueble=inmueble, imagen=imagen)
+
+            messages.success(request, "Inmueble publicado exitosamente.")
+            return redirect('home')
+    else:
+        inmueble_form = InmuebleForm()
+        imagen_form = ImagenInmuebleForm()
+
+    return render(request, 'publicar_inmueble.html', {'inmueble_form': inmueble_form, 'imagen_form': imagen_form})

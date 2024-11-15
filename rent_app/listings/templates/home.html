@@ -25,7 +25,8 @@
 <body>
     <div class="header">
         <img src="{% static 'logo.png' %}" alt="Logo" height="40">
-        <button>Publicar</button>
+       
+        <a href="{% url 'publicar_inmueble' %}" class="btn btn-primary">Publicar</a>
         {% if user.is_authenticated %}
         <a href="{% url 'perfil' %}" class="user-icon">👤</a>  <!-- Redirige a la página de perfil -->
         {% else %}

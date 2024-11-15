@@ -33,6 +33,7 @@ urlpatterns = [
     path('perfil/editar/', views.editar_perfil, name='editar_perfil'),
     path('mis-inmuebles/', views.mis_inmuebles, name='mis_inmuebles'),
     path('logout/', LogoutView.as_view(next_page='home'), name='logout'), 
+    path('publicar/', views.publicar_inmueble, name='publicar_inmueble'),
 
 ]
 
