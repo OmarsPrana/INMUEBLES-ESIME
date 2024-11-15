@@ -4,17 +4,36 @@ from django.contrib import messages
 from django.conf import settings
 from django.views.generic import CreateView
 from django.views import View
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404 
 from django.contrib.auth.forms import AuthenticationForm
 from .forms import CustomUserCreationForm, EmailAuthenticationForm
 from django.contrib.auth.decorators import login_required
 from .forms import InmuebleForm, ImagenInmuebleForm
-from .models import ImagenInmueble
+from .models import ImagenInmueble, Inmueble
 
 def home(request):
-    
-    return render(request, 'home.html')
+    # Obtén los valores de los filtros desde los parámetros GET de la URL
+    tipo = request.GET.get('tipo')
+    costo = request.GET.get('costo')
+    distancia = request.GET.get('distancia')
 
+    # Empieza con todos los inmuebles
+    inmuebles = Inmueble.objects.all()
+
+    # Filtra según el tipo de inmueble si está presente en la URL
+    if tipo:
+        inmuebles = inmuebles.filter(tipo_inmueble=tipo)
+
+    # Filtra por rango de precio si el filtro de costo está presente
+    if costo:
+        min_price, max_price = map(int, costo.split('-'))
+        inmuebles = inmuebles.filter(precio__gte=min_price, precio__lte=max_price)
+
+    # Filtra por distancia si está presente
+    if distancia:
+        inmuebles = inmuebles.filter(distancia=distancia)
+
+    return render(request, 'home.html', {'inmuebles': inmuebles})
 class RegisterView(CreateView):
     form_class = CustomUserCreationForm
     template_name = 'register.html'
@@ -44,6 +63,11 @@ class CustomLoginView(View):
             messages.error(request, "Lo sentimos, el correo y/o contraseña no coinciden, intenta de nuevo.")
             return render(request, self.template_name, {'form': form})
         
+def inmueble_detalle(request, inmueble_id):
+    # Usa get_object_or_404 para obtener el inmueble o mostrar 404 si no existe
+    inmueble = get_object_or_404(Inmueble, id=inmueble_id)
+    return render(request, 'inmueble_detalle.html', {'inmueble': inmueble})
+
 @login_required
 def perfil(request):
     return render(request, 'perfil.html', {'user': request.user})
@@ -64,8 +88,8 @@ def editar_perfil(request):
 
 @login_required
 def mis_inmuebles(request):
-    # Puedes agregar lógica aquí para obtener los inmuebles del usuario si tienes un modelo de inmuebles
-    return render(request, 'mis_inmuebles.html')
+    inmuebles = Inmueble.objects.filter(usuario=request.user)  # Filtra por usuario actual
+    return render(request, 'mis_inmuebles.html', {'inmuebles': inmuebles})
 
 
 @login_required
@@ -90,3 +114,8 @@ def publicar_inmueble(request):
         imagen_form = ImagenInmuebleForm()
 
     return render(request, 'publicar_inmueble.html', {'inmueble_form': inmueble_form, 'imagen_form': imagen_form})
+
+def inmueble_detalle(request, inmueble_id):
+    # Obtén el inmueble específico usando el id proporcionado
+    inmueble = get_object_or_404(Inmueble, id=inmueble_id)
+    return render(request, 'inmueble_detalle.html', {'inmueble': inmueble})

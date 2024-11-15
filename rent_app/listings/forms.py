@@ -62,3 +62,4 @@ class InmuebleForm(forms.ModelForm):
 
 class ImagenInmuebleForm(forms.Form):
     imagenes = forms.FileField(widget=forms.FileInput(), label="Cargar fotos (mínimo 7, máximo 15)", required=True)
+

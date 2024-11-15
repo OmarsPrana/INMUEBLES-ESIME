@@ -1,13 +1,27 @@
-<!-- listings/templates/mis_inmuebles.html -->
+<!-- templates/mis_inmuebles.html -->
 <!DOCTYPE html>
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Mis Inmuebles</title>
 </head>
 <body>
     <h1>Mis Inmuebles</h1>
-    <p>Aquí se mostrarán tus inmuebles.</p>
+    <div class="listings">
+        {% for inmueble in inmuebles %}
+        <div class="listing">
+            <a href="{% url 'inmueble_detalle' inmueble.id %}">
+                {% if inmueble.imagenes.first %}
+                    <img src="{{ inmueble.imagenes.first.imagen.url }}" alt="{{ inmueble.tipo_inmueble }}" width="200">
+                {% endif %}
+                <h3>{{ inmueble.tipo_inmueble }}</h3>
+                <p>MXN {{ inmueble.precio }}</p>
+                <p>A {{ inmueble.distancia }} km</p>
+            </a>
+        </div>
+        {% empty %}
+        <p>No has publicado ningún inmueble.</p>
+        {% endfor %}
+    </div>
 </body>
 </html>
