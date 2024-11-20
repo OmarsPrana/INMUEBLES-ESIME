@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Califica el Inmueble</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f9f9f9;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        .container {
+            max-width: 600px;
+            width: 100%;
+            background-color: #fff;
+            padding: 20px 30px;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        h1 {
+            text-align: center;
+            color: #333;
+            margin-bottom: 10px;
+        }
+
+        p {
+            text-align: center;
+            color: #666;
+            font-size: 14px;
+            margin-bottom: 20px;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .form-group label {
+            display: block;
+            font-weight: bold;
+            color: #555;
+            margin-bottom: 5px;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            font-size: 14px;
+        }
+
+        .form-control[type="date"] {
+            font-family: Arial, sans-serif;
+        }
+
+        .checkbox-group {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .star-rating {
+            display: flex;
+            justify-content: center;
+            gap: 5px;
+            margin: 15px 0;
+        }
+
+        .star {
+            font-size: 24px;
+            color: #ccc;
+            cursor: pointer;
+        }
+
+        .star.selected {
+            color: #FFD700;
+        }
+
+        .form-textarea {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            resize: vertical;
+            height: 80px;
+        }
+
+        .submit-button {
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        .submit-button button {
+            background-color: #007bff;
+            color: #fff;
+            border: none;
+            padding: 12px 20px;
+            font-size: 16px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        .submit-button button:hover {
+            background-color: #0056b3;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Califica el inmueble</h1>
+        <p>Aquí podrás agregar comentarios acerca del inmueble</p>
+        <form method="post">
+            {% csrf_token %}
+            <!-- Fecha de inicio de renta -->
+            <div class="form-group">
+                <label for="fecha_inicio">Fecha de inicio de renta</label>
+                <input type="date" id="fecha_inicio" name="fecha_inicio" class="form-control" required>
+            </div>
+
+            <!-- Fecha de término de renta -->
+            <div class="form-group">
+                <label for="fecha_fin">Fecha de término de renta</label>
+                <input type="date" id="fecha_fin" name="fecha_fin" class="form-control">
+            </div>
+
+            <!-- Checkbox: Aún rento en este lugar -->
+            <div class="form-group checkbox-group">
+                <input type="checkbox" id="aun_renta" name="aun_renta">
+                <label for="aun_renta">Aún rento en este lugar</label>
+            </div>
+
+            <!-- Calificación con estrellas -->
+            <div class="form-group">
+                <label for="estrellas">Valora este inmueble</label>
+                <div class="star-rating">
+                    <span class="star" data-value="1">★</span>
+                    <span class="star" data-value="2">★</span>
+                    <span class="star" data-value="3">★</span>
+                    <span class="star" data-value="4">★</span>
+                    <span class="star" data-value="5">★</span>
+                </div>
+                <input type="hidden" id="estrellas" name="estrellas" required>
+            </div>
+
+            <!-- Comentario -->
+            <div class="form-group">
+                <label for="comentario">Agrega un comentario</label>
+                <textarea id="comentario" name="comentario" class="form-textarea" placeholder="Escribe tu comentario aquí..."></textarea>
+            </div>
+
+            <!-- Botón para enviar -->
+            <div class="submit-button">
+                <button type="submit">Calificar</button>
+            </div>
+        </form>
+    </div>
+
+    <script>
+        // Script para manejo de las estrellas
+        const stars = document.querySelectorAll('.star');
+        const ratingInput = document.getElementById('estrellas');
+
+        stars.forEach(star => {
+            star.addEventListener('click', () => {
+                stars.forEach(s => s.classList.remove('selected'));
+                star.classList.add('selected');
+                ratingInput.value = star.getAttribute('data-value');
+            });
+        });
+    </script>
+</body>
+</html>

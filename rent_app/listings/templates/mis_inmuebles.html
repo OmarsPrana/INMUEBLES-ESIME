@@ -1,26 +1,110 @@
-<!-- templates/mis_inmuebles.html -->
+
 <!DOCTYPE html>
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <title>Mis Inmuebles</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tus Publicaciones</title>
+    {% load static %} <!-- Aquí cargas el módulo estático -->
+    <style>
+        .container {
+            max-width: 1200px;
+            margin: 20px auto;
+            font-family: Arial, sans-serif;
+        }
+        .title {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .inmueble {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border: 1px solid #ddd;
+            border-radius: 10px;
+            padding: 15px;
+            margin-bottom: 15px;
+            background-color: #f9f9f9;
+        }
+        .inmueble img {
+            width: 150px;
+            height: 100px;
+            object-fit: cover;
+            border-radius: 10px;
+        }
+        .info {
+            flex: 1;
+            margin-left: 20px;
+        }
+        .info h3 {
+            margin: 0;
+            font-size: 18px;
+            color: #333;
+        }
+        .info p {
+            margin: 5px 0;
+            color: #555;
+        }
+        .actions {
+            display: flex;
+            gap: 10px;
+        }
+        .actions button, .actions a {
+            padding: 10px 15px;
+            text-decoration: none;
+            border: none;
+            border-radius: 5px;
+            font-size: 14px;
+            cursor: pointer;
+        }
+        .btn-blue {
+            background-color: #007bff;
+            color: white;
+        }
+        .btn-blue:hover {
+            background-color: #0056b3;
+        }
+        .btn-red {
+            background-color: #dc3545;
+            color: white;
+        }
+        .btn-red:hover {
+            background-color: #a71d2a;
+        }
+        .btn-orange {
+            background-color: #fd7e14;
+            color: white;
+        }
+        .btn-orange:hover {
+            background-color: #dc6e0f;
+        }
+    </style>
 </head>
 <body>
-    <h1>Mis Inmuebles</h1>
-    <div class="listings">
+    <div class="container">
+        <h1 class="title">Tus publicaciones</h1>
         {% for inmueble in inmuebles %}
-        <div class="listing">
-            <a href="{% url 'inmueble_detalle' inmueble.id %}">
-                {% if inmueble.imagenes.first %}
-                    <img src="{{ inmueble.imagenes.first.imagen.url }}" alt="{{ inmueble.tipo_inmueble }}" width="200">
-                {% endif %}
-                <h3>{{ inmueble.tipo_inmueble }}</h3>
-                <p>MXN {{ inmueble.precio }}</p>
-                <p>A {{ inmueble.distancia }} km</p>
-            </a>
+        <div class="inmueble">
+            {% if inmueble.imagenes.all %}
+                <img src="{{ inmueble.imagenes.first.imagen.url }}" alt="Imagen del inmueble">
+            {% else %}
+                <img src="{% static 'default-image.jpg' %}" alt="Imagen no disponible">
+            {% endif %}
+            <div class="info">
+                <h3>{{ inmueble.tipo_inmueble }} MXN {{ inmueble.precio }}</h3>
+                <p>{{ inmueble.descripcion }}</p>
+            </div>
+            <div class="actions">
+                <a href="{% url 'editar_inmueble' inmueble.id %}" class="btn-blue">Editar</a>
+                <form method="post" action="{% url 'eliminar_inmueble' inmueble.id %}">
+                    {% csrf_token %}
+                    <button type="submit" class="btn-red">Eliminar</button>
+                </form>
+                <a href="{% url 'asignar_arrendatario' inmueble.id %}" class="btn-orange">Asignar Arrendatario</a>
+            </div>
         </div>
         {% empty %}
-        <p>No has publicado ningún inmueble.</p>
+        <p>No tienes publicaciones aún.</p>
         {% endfor %}
     </div>
 </body>

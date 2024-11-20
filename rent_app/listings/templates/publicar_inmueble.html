@@ -1,4 +1,3 @@
-<!-- listings/templates/publicar_inmueble.html -->
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -62,10 +61,6 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            background-image: url('https://www.svgrepo.com/show/276264/upload-cloud.svg');
-            background-repeat: no-repeat;
-            background-position: center;
-            background-size: 80px;
             position: relative;
         }
         .form-control-file::before {
@@ -82,11 +77,6 @@
             position: absolute;
             bottom: 20px;
             font-size: 12px;
-        }
-        .error-message {
-            color: #d9534f;
-            font-size: 12px;
-            margin-top: 5px;
         }
         .submit-button {
             text-align: center;
@@ -116,27 +106,18 @@
         <form method="post" enctype="multipart/form-data">
             {% csrf_token %}
             <div class="form-section">
-                <!-- Left Column: Image Upload and Contact Number -->
                 <div class="left-column">
                     <div class="form-group">
                         <div class="form-control-file">
-                            <input type="file" name="imagenes" multiple required style="opacity: 0; position: absolute; width: 100%; height: 100%; cursor: pointer;">
+                            <input type="file" id="imagenes" name="imagenes" multiple required style="opacity: 0; position: absolute; width: 100%; height: 100%; cursor: pointer;">
                         </div>
-                        {% if form.imagenes.errors %}
-                            <p class="error-message">{{ form.imagenes.errors.0 }}</p>
-                        {% endif %}
                     </div>
+                </div>
+                <div class="right-column">
                     <div class="form-group">
                         <label for="numero_contacto">Número de contacto</label>
                         <input type="text" name="numero_contacto" class="form-control" required>
-                        {% if form.numero_contacto.errors %}
-                            <p class="error-message">{{ form.numero_contacto.errors.0 }}</p>
-                        {% endif %}
                     </div>
-                </div>
-
-                <!-- Right Column: Property Details -->
-                <div class="right-column">
                     <div class="form-group">
                         <label for="tipo_inmueble">Selecciona el tipo de inmueble</label>
                         <select name="tipo_inmueble" class="form-control" required>
@@ -145,9 +126,6 @@
                             <option value="Casa">Casa</option>
                             <option value="Cuarto">Cuarto</option>
                         </select>
-                        {% if form.tipo_inmueble.errors %}
-                            <p class="error-message">{{ form.tipo_inmueble.errors.0 }}</p>
-                        {% endif %}
                     </div>
                     <div class="form-group">
                         <label for="distancia">Selecciona una distancia aproximada</label>
@@ -157,44 +135,25 @@
                             <option value="5-10 km">5-10 km</option>
                             <option value="10-15 km">10-15 km</option>
                         </select>
-                        {% if form.distancia.errors %}
-                            <p class="error-message">{{ form.distancia.errors.0 }}</p>
-                        {% endif %}
                     </div>
                     <div class="form-group">
                         <label for="precio">Precio</label>
-                        <div style="display: flex; align-items: center;">
-                            <input type="number" name="precio" class="form-control" placeholder="MXN" style="flex: 1;" required>
-                        </div>
-                        {% if form.precio.errors %}
-                            <p class="error-message">{{ form.precio.errors.0 }}</p>
-                        {% endif %}
+                        <input type="number" name="precio" class="form-control" placeholder="MXN" required>
                     </div>
                     <div class="form-group">
                         <label for="direccion">Dirección</label>
                         <input type="text" name="direccion" class="form-control" placeholder="Calle, Colonia, No" required>
-                        {% if form.direccion.errors %}
-                            <p class="error-message">{{ form.direccion.errors.0 }}</p>
-                        {% endif %}
                     </div>
                     <div class="form-group">
                         <label for="codigo_postal">Código Postal</label>
                         <input type="text" name="codigo_postal" class="form-control" required>
-                        {% if form.codigo_postal.errors %}
-                            <p class="error-message">{{ form.codigo_postal.errors.0 }}</p>
-                        {% endif %}
                     </div>
                     <div class="form-group">
                         <label for="descripcion">Descripción</label>
                         <textarea name="descripcion" class="form-control" rows="5" required></textarea>
-                        {% if form.descripcion.errors %}
-                            <p class="error-message">{{ form.descripcion.errors.0 }}</p>
-                        {% endif %}
                     </div>
                 </div>
             </div>
-
-            <!-- Submit Button -->
             <div class="submit-button">
                 <button type="submit">Publicar</button>
             </div>

@@ -35,6 +35,13 @@ urlpatterns = [
     path('inmueble/<int:inmueble_id>/', views.inmueble_detalle, name='inmueble_detalle'),  # Ruta para detalle de inmueble
     path('logout/', LogoutView.as_view(next_page='home'), name='logout'),  # Ruta de cierre de sesión
     path('publicar/', views.publicar_inmueble, name='publicar_inmueble'), 
+    path('editar-inmueble/<int:inmueble_id>/', views.editar_inmueble, name='editar_inmueble'),
+    path('eliminar-imagen/<int:imagen_id>/', views.eliminar_imagen, name='eliminar_imagen'),
+    path('eliminar-inmueble/<int:inmueble_id>/', views.eliminar_inmueble, name='eliminar_inmueble'),
+    path('inmueble/<int:inmueble_id>/asignar-arrendatario/', views.asignar_arrendatario, name='asignar_arrendatario'),
+    path('inmueble/<int:inmueble_id>/calificar/', views.calificar_inmueble, name='calificar_inmueble'),
+     path('inmueble/<int:inmueble_id>/reservar/', views.reservar_inmueble, name='reservar_inmueble'),
+     path('inmueble/<int:inmueble_id>/reservar/formulario/', views.reservar_inmueble_formulario, name='reservar_inmueble_formulario'),
      # Ruta para publicar un inmueble
 ]
 

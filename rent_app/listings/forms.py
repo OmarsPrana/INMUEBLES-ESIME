@@ -3,7 +3,8 @@ from django import forms
 from django.contrib.auth import authenticate
 from django.contrib.auth.models import User
 from django.contrib.auth.forms import UserCreationForm
-from .models import Inmueble, ImagenInmueble
+from .models import Inmueble, ImagenInmueble, Calificacion
+
 
 class CustomUserCreationForm(UserCreationForm):
     first_name = forms.CharField(label="Nombre y Apellido", max_length=150, required=True)
@@ -44,10 +45,11 @@ class EmailAuthenticationForm(forms.Form):
         self.cleaned_data["user"] = user
         return self.cleaned_data
 
+
 class InmuebleForm(forms.ModelForm):
     class Meta:
         model = Inmueble
-        fields = ['tipo_inmueble', 'distancia', 'direccion', 'codigo_postal', 'descripcion', 'precio', 'numero_contacto', 'imagen']
+        fields = ['tipo_inmueble', 'distancia', 'direccion', 'codigo_postal', 'descripcion', 'precio', 'numero_contacto']
         widgets = {
             'tipo_inmueble': forms.Select(attrs={'class': 'form-control'}),
             'distancia': forms.Select(attrs={'class': 'form-control'}),
@@ -56,10 +58,32 @@ class InmuebleForm(forms.ModelForm):
             'descripcion': forms.Textarea(attrs={'class': 'form-control'}),
             'precio': forms.NumberInput(attrs={'class': 'form-control'}),
             'numero_contacto': forms.TextInput(attrs={'class': 'form-control'}),
-            'imagen': forms.FileInput(attrs={'class': 'form-control'}),
         }
 
 
-class ImagenInmuebleForm(forms.Form):
-    imagenes = forms.FileField(widget=forms.FileInput(), label="Cargar fotos (mínimo 7, máximo 15)", required=True)
+class AsignarArrendatarioForm(forms.ModelForm):
+    arrendatario = forms.ModelChoiceField(queryset=User.objects.all(), required=True, label="Selecciona al arrendatario")
 
+    class Meta:
+        model = Inmueble
+        fields = ['arrendatario']
+
+class CalificacionForm(forms.ModelForm):
+    class Meta:
+        model = Calificacion
+        fields = ['fecha_inicio', 'fecha_fin', 'aun_renta', 'estrellas', 'comentario']
+        widgets = {
+            'fecha_inicio': forms.DateInput(attrs={'type': 'date'}),
+            'fecha_fin': forms.DateInput(attrs={'type': 'date'}),
+            'comentario': forms.Textarea(attrs={'placeholder': 'Escribe tu comentario...'}),
+        }
+
+
+class ReservaForm(forms.Form):
+    nombre = forms.CharField(label='Nombre', max_length=100, widget=forms.TextInput(attrs={'readonly': 'readonly'}))
+    apellido = forms.CharField(label='Apellido', max_length=100, widget=forms.TextInput(attrs={'readonly': 'readonly'}))
+    nombre_usuario = forms.CharField(label='Nombre de Usuario', max_length=100, widget=forms.TextInput(attrs={'readonly': 'readonly'}))
+    fecha_entrada = forms.DateField(label='Fecha de Entrada', widget=forms.SelectDateWidget())
+    fecha_salida = forms.DateField(label='Fecha de Salida', widget=forms.SelectDateWidget())
+    numero_personas = forms.IntegerField(label='Número de Personas', min_value=1)
+    comentarios = forms.CharField(label='Comentarios', widget=forms.Textarea, required=False)
