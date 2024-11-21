@@ -1,5 +1,6 @@
 # listings/models.py
 from django.db import models
+from django.conf import settings
 from django.contrib.auth.models import User
 
 
@@ -45,20 +46,31 @@ class HistorialRenta(models.Model):
     def __str__(self):
         return f"{self.usuario.username} - {self.inmueble}"
 
-    
+ 
+
 class ImagenInmueble(models.Model):
     inmueble = models.ForeignKey(Inmueble, related_name='imagenes', on_delete=models.CASCADE)
     imagen = models.ImageField(upload_to='inmuebles/imagenes/')
 
 
 class Calificacion(models.Model):
-    usuario = models.ForeignKey(User, on_delete=models.CASCADE)
-    inmueble = models.ForeignKey(Inmueble, on_delete=models.CASCADE, related_name='calificaciones')
+    inmueble = models.ForeignKey(Inmueble, related_name='calificaciones', on_delete=models.CASCADE)
+    
+    usuario = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, null=True, blank=True)
     fecha_inicio = models.DateField()
-    fecha_fin = models.DateField(null=True, blank=True)
+    fecha_fin = models.DateField()
     aun_renta = models.BooleanField(default=False)
-    estrellas = models.PositiveSmallIntegerField()  # Calificación de 1 a 5
+    
+    estrellas = models.PositiveSmallIntegerField(choices=[(i, f"{i} estrellas") for i in range(1, 6)])
     comentario = models.TextField()
 
+
+    def save(self, *args, **kwargs):
+        # Si el usuario es arrendatario del inmueble, se marca como verificado.
+        if self.inmueble.arrendatario == self.usuario:
+            self.verificado = True
+        super().save(*args, **kwargs)
+    
+
     def __str__(self):
-        return f"Calificación de {self.usuario.username} para {self.inmueble}"
+        return f'{self.usuario} - {self.estrellas} estrellas' if self.usuario else f'Anónimo - {self.estrellas} estrellas'

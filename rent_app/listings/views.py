@@ -9,8 +9,9 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.forms import AuthenticationForm
 from .forms import CustomUserCreationForm, EmailAuthenticationForm
 from django.contrib.auth.decorators import login_required
+from django.contrib.auth.models import User
 from .forms import InmuebleForm, CalificacionForm, AsignarArrendatarioForm, ReservaForm
-from .models import ImagenInmueble, Inmueble, HistorialRenta
+from .models import ImagenInmueble, Inmueble, HistorialRenta, Calificacion
 from django.http import Http404
 
 def home(request):
@@ -64,10 +65,28 @@ class CustomLoginView(View):
         else:
             messages.error(request, "Lo sentimos, el correo y/o contraseña no coinciden, intenta de nuevo.")
             return render(request, self.template_name, {'form': form})
-        
-def inmueble_detalle(request, inmueble_id):
-    inmueble = get_object_or_404(Inmueble, id=inmueble_id)  # Obtiene el inmueble
-    return render(request, 'detalle_inmueble.html', {'inmueble': inmueble}) 
+
+       
+def detalle_inmueble(request, inmueble_id):
+    inmueble = get_object_or_404(Inmueble, id=inmueble_id)
+    comentarios = inmueble.comentarios.all()
+
+    if request.method == 'POST':
+        comentario_form = ComentarioForm(request.POST)
+        if comentario_form.is_valid():
+            comentario = comentario_form.save(commit=False)
+            comentario.usuario = request.user
+            comentario.inmueble = inmueble
+            comentario.save()
+            return redirect('detalle_inmueble', inmueble_id=inmueble.id)
+    else:
+        comentario_form = ComentarioForm()
+
+    return render(request, 'detalle_inmueble.html', {
+        'inmueble': inmueble,
+        'comentarios': comentarios,
+        'comentario_form': comentario_form
+    })
 
 @login_required
 def perfil(request):
@@ -145,16 +164,21 @@ def eliminar_inmueble(request, inmueble_id):
 @login_required
 def asignar_arrendatario(request, inmueble_id):
     inmueble = get_object_or_404(Inmueble, id=inmueble_id, arrendador=request.user)
-    
-    if request.method == "POST":
-        form = AsignarArrendatarioForm(request.POST, instance=inmueble)
-        if form.is_valid():
-            form.save()
-            return redirect('inmueble_detalle', inmueble_id=inmueble.id)
-    else:
-        form = AsignarArrendatarioForm(instance=inmueble)
 
-    return render(request, 'asignar_arrendatario.html', {'form': form, 'inmueble': inmueble})
+    if request.method == "POST":
+        arrendatario_id = request.POST.get("arrendatario")
+        arrendatario = User.objects.get(id=arrendatario_id)
+        inmueble.arrendatario = arrendatario
+        inmueble.save()
+        return redirect('inmueble_detalle', inmueble_id=inmueble.id)
+    
+    # Obtener todos los usuarios para seleccionar como arrendatario
+    usuarios = User.objects.all()
+
+    return render(request, 'asignar_arrendatario.html', {
+        'inmueble': inmueble,
+        'usuarios': usuarios
+    })
 
 @login_required
 def reservar_inmueble_formulario(request, inmueble_id):
@@ -219,50 +243,39 @@ def publicar_inmueble(request):
 def calificar_inmueble(request, inmueble_id):
     inmueble = get_object_or_404(Inmueble, id=inmueble_id)
 
-    # Verifica si el usuario es el arrendatario
-    if inmueble.arrendatario != request.user:
-        return HttpResponseForbidden("No puedes calificar este inmueble porque no eres el arrendatario.")
-
-    # Procesa la calificación (como guardar en base de datos)
-    if request.method == "POST":
+    if request.method == 'POST':
         form = CalificacionForm(request.POST)
         if form.is_valid():
             calificacion = form.save(commit=False)
             calificacion.inmueble = inmueble
-            calificacion.usuario = request.user
+            if request.user.is_authenticated:
+                calificacion.usuario = request.user  # Solo guarda el usuario si está autenticado
             calificacion.save()
             return redirect('inmueble_detalle', inmueble_id=inmueble.id)
     else:
         form = CalificacionForm()
 
     return render(request, 'calificar_inmueble.html', {'form': form, 'inmueble': inmueble})
+    
+
+
+
 
 
 
 def inmueble_detalle(request, inmueble_id):
     inmueble = get_object_or_404(Inmueble, id=inmueble_id)
-    imagenes = inmueble.imagenes.all()  # Suponiendo que tienes un campo relacionado llamado `imagenes` en tu modelo
-    return render(request, 'inmueble_detalle.html', {'inmueble': inmueble, 'imagenes': imagenes})
+    
+    comentarios = Calificacion.objects.filter(inmueble=inmueble)
+    comentario_form = CalificacionForm()
 
-def calificar_inmueble(request, inmueble_id):
-    inmueble = get_object_or_404(Inmueble, id=inmueble_id)
+    context = {
+        'inmueble': inmueble,
+        'imagenes': inmueble.imagenes.all(),
+        'comentarios': comentarios,
+        'comentario_form': comentario_form
+    }
+    return render(request, 'inmueble_detalle.html', context)
 
-    # Verificar si el usuario ha rentado este inmueble
-    if not HistorialRenta.objects.filter(usuario=request.user, inmueble=inmueble).exists():
-        messages.error(request, "No puedes calificar este inmueble porque no lo has rentado.")
-        return redirect('inmueble_detalle', inmueble_id=inmueble.id)
 
-    # Procesar el formulario de calificación
-    if request.method == "POST":
-        form = CalificacionForm(request.POST)
-        if form.is_valid():
-            calificacion = form.save(commit=False)
-            calificacion.usuario = request.user
-            calificacion.inmueble = inmueble
-            calificacion.save()
-            messages.success(request, "Gracias por calificar el inmueble.")
-            return redirect('inmueble_detalle', inmueble_id=inmueble.id)
-    else:
-        form = CalificacionForm()
 
-    return render(request, 'calificar_inmueble.html', {'form': form, 'inmueble': inmueble})
