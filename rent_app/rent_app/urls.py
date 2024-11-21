@@ -42,6 +42,7 @@ urlpatterns = [
     path('inmueble/<int:inmueble_id>/calificar/', views.calificar_inmueble, name='calificar_inmueble'),
     path('inmueble/<int:inmueble_id>/reservar/', views.reservar_inmueble, name='reservar_inmueble'),
     path('inmueble/<int:inmueble_id>/reservar/formulario/', views.reservar_inmueble_formulario, name='reservar_inmueble_formulario'),
+    path('logout_and_redirect_mis_inmuebles/', views.logout_and_redirect_mis_inmuebles, name='logout_and_redirect_mis_inmuebles'),
      # Ruta para publicar un inmueble
 ]
 

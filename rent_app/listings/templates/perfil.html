@@ -28,10 +28,12 @@
         <!-- Botones superiores alineados horizontalmente -->
         <div class="contenedor-acciones">
             <a href="{% url 'editar_perfil' %}" class="btn btn-editar">Editar</a>
-            <a href="{% url 'logout' %}" class="btn btn-cerrar">Cerrar sesión</a>
+           
+            <a href="{% url 'logout_and_redirect_mis_inmuebles' %}" class="btn btn-inmuebles">Cerrar sesión</a>
         </div>
     
         <!-- Botón naranja separado debajo -->
         <a href="{% url 'mis_inmuebles' %}" class="btn btn-inmuebles">Mis inmuebles</a>
+        
     </div>        
 {% endblock %}

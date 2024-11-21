@@ -7,13 +7,14 @@ from django.views.generic import CreateView
 from django.views import View
 from django.shortcuts import render, redirect, get_object_or_404 
 from django.contrib.auth.forms import AuthenticationForm, PasswordChangeForm
-from django.contrib.auth import update_session_auth_hash
+from django.contrib.auth import update_session_auth_hash,logout
 from .forms import CustomUserCreationForm, EmailAuthenticationForm
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 from .forms import InmuebleForm, CalificacionForm, AsignarArrendatarioForm, ReservaForm,CustomUserUpdateForm, CustomPasswordChangeForm
 from .models import ImagenInmueble, Inmueble, HistorialRenta, Calificacion
 from django.http import Http404
+
 
 def home(request):
     # Obtén los valores de los filtros desde los parámetros GET de la URL
@@ -68,7 +69,11 @@ class CustomLoginView(View):
             messages.error(request, "Lo sentimos, el correo y/o contraseña no coinciden, intenta de nuevo.")
             return render(request, self.template_name, {'form': form})
 
-       
+@login_required      
+def logout_and_redirect_mis_inmuebles(request):
+    logout(request)  # Cerrar sesión del usuario
+    return redirect('mis_inmuebles')  # Redirigir a la página de "Mis inmuebles"
+
 def detalle_inmueble(request, inmueble_id):
     inmueble = get_object_or_404(Inmueble, id=inmueble_id)
     comentarios = inmueble.comentarios.all()
