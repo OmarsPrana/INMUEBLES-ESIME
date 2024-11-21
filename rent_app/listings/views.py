@@ -6,11 +6,12 @@ from django.conf import settings
 from django.views.generic import CreateView
 from django.views import View
 from django.shortcuts import render, redirect, get_object_or_404 
-from django.contrib.auth.forms import AuthenticationForm
+from django.contrib.auth.forms import AuthenticationForm, PasswordChangeForm
+from django.contrib.auth import update_session_auth_hash
 from .forms import CustomUserCreationForm, EmailAuthenticationForm
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
-from .forms import InmuebleForm, CalificacionForm, AsignarArrendatarioForm, ReservaForm
+from .forms import InmuebleForm, CalificacionForm, AsignarArrendatarioForm, ReservaForm,CustomUserUpdateForm, CustomPasswordChangeForm
 from .models import ImagenInmueble, Inmueble, HistorialRenta, Calificacion
 from django.http import Http404
 
@@ -96,16 +97,32 @@ def perfil(request):
 @login_required
 def editar_perfil(request):
     if request.method == 'POST':
-        form = CustomUserCreationForm(request.POST, instance=request.user)
-        if form.is_valid():
-            form.save()
-            messages.success(request, "Perfil actualizado exitosamente.")
-            return redirect('perfil')
+        if 'btn_guardar_perfil' in request.POST:
+            user_form = CustomUserUpdateForm(request.POST, instance=request.user)
+            if user_form.is_valid():
+                user_form.save()
+                messages.success(request, "Perfil actualizado exitosamente.")
+                return redirect('perfil')
+            else:
+                messages.error(request, "Hubo un error al actualizar tu perfil. Revisa la información e inténtalo de nuevo.")
+        
+        elif 'btn_cambiar_contrasena' in request.POST:
+            password_form = PasswordChangeForm(user=request.user, data=request.POST)
+            if password_form.is_valid():
+                user = password_form.save()
+                update_session_auth_hash(request, user)  # Evita desconectar al usuario
+                messages.success(request, "Contraseña actualizada exitosamente.")
+                return redirect('perfil')
+            else:
+                messages.error(request, "Hubo un error al actualizar la contraseña. Verifica la información e inténtalo de nuevo.")
     else:
-        form = CustomUserCreationForm(instance=request.user)
-    
-    return render(request, 'editar_perfil.html', {'form': form})
+        user_form = CustomUserUpdateForm(instance=request.user)
+        password_form = PasswordChangeForm(user=request.user)
 
+    return render(request, 'editar_perfil.html', {
+        'form': user_form,
+        'password_form': password_form
+    })
 @login_required
 def mis_inmuebles(request):
     inmuebles = Inmueble.objects.filter(usuario=request.user)  # Filtra por usuario actual

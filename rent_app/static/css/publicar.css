@@ -1,0 +1,109 @@
+/* static/css/publicar.css */
+
+/* Estilos para la página de publicación de inmueble */
+body {
+    font-family: Arial, sans-serif;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 0;
+    padding: 0;
+    background-color: #f4f4f4;
+    min-height: 100vh;
+}
+
+.container {
+    max-width: 1100px;
+    width: 90%;
+    background: #ffffff;
+    padding: 40px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    border-radius: 10px;
+ 
+
+h1 {
+    text-align: center;
+    font-size: 24px;
+    color: #333333;
+    margin-bottom: 30px;
+}
+
+.form-section {
+    display: flex;
+    gap: 20px;
+}
+
+.left-column, .right-column {
+    flex: 1;
+}
+
+.form-group {
+    margin-bottom: 20px;
+}
+
+.form-group label {
+    display: block;
+    font-weight: bold;
+    margin-bottom: 5px;
+    color: #555555;
+}
+
+.form-control, .form-control-file {
+    width: 100%;
+    padding: 10px;
+    font-size: 14px;
+    border: 1px solid #cccccc;
+    border-radius: 5px;
+}
+
+.form-control-file {
+    height: 300px;
+    border: 2px dashed #bbbbbb;
+    text-align: center;
+    font-size: 16px;
+    color: #555555;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+}
+
+.form-control-file::before {
+    content: "Cargar fotos";
+    font-weight: bold;
+    color: #333333;
+    position: absolute;
+    top: 20px;
+    font-size: 16px;
+}
+
+.form-control-file::after {
+    content: "Mínimo 7 y máximo 15";
+    color: #777777;
+    position: absolute;
+    bottom: 20px;
+    font-size: 12px;
+}
+
+.submit-button {
+    text-align: center;
+    margin-top: 30px;
+}
+
+.submit-button button {
+    background-color: #007bff;
+    color: #ffffff;
+    padding: 15px 30px;
+    font-size: 18px;
+    font-weight: bold;
+    border: 2px solid #007bff;
+    border-radius: 8px;
+    cursor: pointer;
+    width: 50%;
+    transition: all 0.3s;
+}
+
+.submit-button button:hover {
+    background-color: #ffffff;
+    color: #007bff;
+}

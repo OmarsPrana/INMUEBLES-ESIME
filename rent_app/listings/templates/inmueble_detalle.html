@@ -1,219 +1,52 @@
-<!DOCTYPE html>
-<html lang="es">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    
-    <title>Detalle del Inmueble</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 0;
-            padding: 0;
-            background-color: #f4f4f4;
-        }
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}Detalle del Inmueble{% endblock %}
 
-        .container {
-            max-width: 1200px;
-            margin: 20px auto;
-            background: #fff;
-            padding: 20px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-            border-radius: 8px;
-            display: flex;
-            gap: 20px;
-        }
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/inmueble_detalle.css' %}">
+{% endblock %}
 
-        /* Carrusel de imágenes */
-        .carousel {
-            flex: 1;
-            position: relative;
-            overflow: hidden;
-            border-radius: 8px;
-            max-height: 400px;
-        }
+{% block content %}
+<div class="container">
+    <!-- Carrusel -->
+    <div class="carousel">
+        {% for imagen in imagenes %}
+        <img src="{{ imagen.imagen.url }}" alt="Imagen del inmueble" class="{% if forloop.first %}active{% endif %}">
+        {% endfor %}
+        <div class="carousel-controls">
+            <button onclick="prevImage()">❮</button>
+            <button onclick="nextImage()">❯</button>
+        </div>
+    </div>
 
-        .carousel img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            display: none;
-        }
+    <!-- Detalles del inmueble -->
+    <div class="details">
+        <h2>{{ inmueble.tipo_inmueble }}</h2>
+        <p><strong>Precio:</strong> MXN {{ inmueble.precio }} mensuales</p>
+        <p><strong>Distancia:</strong> {{ inmueble.distancia }}</p>
+        <p><strong>Dirección:</strong> {{ inmueble.direccion }}</p>
+        <p><strong>Código Postal:</strong> {{ inmueble.codigo_postal }}</p>
+        <p><strong>Descripción:</strong> {{ inmueble.descripcion }}</p>
+        <p><strong>Contacto:</strong> {{ inmueble.numero_contacto }}</p>
 
-        .carousel img.active {
-            display: block;
-        }
+        <!-- Botones -->
+        <div class="buttons">
+            <!-- Botón de WhatsApp -->
+            <a class="whatsapp" href="https://wa.me/{{ inmueble.numero_contacto|default:'' }}" target="_blank">
+                Contactar por WhatsApp
+            </a>
 
-        .carousel-controls {
-            position: absolute;
-            top: 50%;
-            width: 100%;
-            display: flex;
-            justify-content: space-between;
-            transform: translateY(-50%);
-        }
+            <form method="get" action="{% url 'reservar_inmueble_formulario' inmueble.id %}">
+                <button type="submit" class="button reserve-button">Reservar Inmueble</button>
+            </form>
 
-        .carousel-controls button {
-            background: rgba(0, 0, 0, 0.5);
-            border: none;
-            color: white;
-            font-size: 18px;
-            padding: 10px;
-            cursor: pointer;
-        }
-
-        /* Detalles del inmueble */
-        .details {
-            flex: 1;
-        }
-
-        .details h2 {
-            font-size: 24px;
-            color: #333;
-            margin-bottom: 10px;
-        }
-
-        .details p {
-            margin: 5px 0;
-            color: #555;
-        }
-
-        .details strong {
-            color: #333;
-        }
-
-        /* Botones */
-        .buttons {
-            display: flex;
-            justify-content: space-between;
-            margin-top: 20px;
-        }
-
-        .buttons a {
-            text-decoration: none;
-            font-size: 16px;
-            font-weight: bold;
-            padding: 15px 30px;
-            border-radius: 8px;
-            display: inline-block;
-            text-align: center;
-            transition: background-color 0.3s ease;
-        }
-        .reserve-button {
-            background-color: #007bff;
-            border: 2px solid #007bff;
-        }
-        .reserve-button:hover {
-            background-color: #fff;
-            color: #007bff;
-        }
-
-        .whatsapp {
-            background-color: #25d366;
-            color: #fff;
-            border: 2px solid #25d366;
-        }
-
-        .whatsapp:hover {
-            background-color: #fff;
-            color: #25d366;
-        }
-
-        .calificar {
-            background-color: #f45c43;
-            color: #fff;
-            border: 2px solid #f45c43;
-        }
-
-        .calificar:hover {
-            background-color: #fff;
-            color: #f45c43;
-        }
-        .modal {
-            display: none;
-            position: fixed;
-            z-index: 1;
-            left: 0;
-            top: 0;
-            width: 100%;
-            height: 100%;
-            overflow: auto;
-            background-color: rgba(0, 0, 0, 0.4);
-            justify-content: center;
-            align-items: center;
-        }
-        .modal-content {
-            background-color: #fefefe;
-            padding: 20px;
-            border: 1px solid #888;
-            width: 80%;
-            max-width: 600px;
-            margin: auto;
-            border-radius: 10px;
-        }
-        .close {
-            color: #aaa;
-            float: right;
-            font-size: 28px;
-            font-weight: bold;
-        }
-        .close:hover, .close:focus {
-            color: #000;
-            text-decoration: none;
-            cursor: pointer;
-        }
-        .comentario-item {
-            border-bottom: 1px solid #ddd;
-            margin-bottom: 10px;
-            padding-bottom: 10px;
-        }
-        .estrellas {
-            color: #ffcc00;
-        }
-    </style>
-</head>
-<body>
-    <div class="container">
-        <!-- Carrusel -->
-        <div class="carousel">
-            {% for imagen in imagenes %}
-            <img src="{{ imagen.imagen.url }}" alt="Imagen del inmueble" class="{% if forloop.first %}active{% endif %}">
-            {% endfor %}
-            <div class="carousel-controls">
-                <button onclick="prevImage()">❮</button>
-                <button onclick="nextImage()">❯</button>
-            </div>
+            <!-- Botón de Calificar -->
+            <a class="calificar" href="{% url 'calificar_inmueble' inmueble.id %}">
+                Calificar
+            </a>
         </div>
 
-        <!-- Detalles del inmueble -->
-        <div class="details">
-            <h2>{{ inmueble.tipo_inmueble }}</h2>
-            <p><strong>Precio:</strong> MXN {{ inmueble.precio }} mensuales</p>
-            <p><strong>Distancia:</strong> {{ inmueble.distancia }}</p>
-            <p><strong>Dirección:</strong> {{ inmueble.direccion }}</p>
-            <p><strong>Código Postal:</strong> {{ inmueble.codigo_postal }}</p>
-            <p><strong>Descripción:</strong> {{ inmueble.descripcion }}</p>
-            <p><strong>Contacto:</strong> {{ inmueble.numero_contacto }}</p>
-            
-
-            <!-- Botones -->
-            <div class="buttons">
-                <!-- Botón de WhatsApp -->
-                <a class="whatsapp" href="https://wa.me/{{ inmueble.numero_contacto|default:'' }}" target="_blank">
-                    Contactar por WhatsApp
-                </a>
-                
-                <form method="get" action="{% url 'reservar_inmueble_formulario' inmueble.id %}">
-                    <button type="submit" class="button reserve-button">Reservar Inmueble</button>
-                </form>
-                
-                <!-- Botón de Calificar -->
-                <a class="calificar" href="{% url 'calificar_inmueble' inmueble.id %}">
-                    Calificar
-                </a>
-            </div>
-
-            <button id="btnComentarios">Ver Comentarios</button>
+        <button id="btnComentarios">Ver Comentarios</button>
 
         <!-- Modal de comentarios -->
         <div id="modalComentarios" class="modal">
@@ -223,12 +56,10 @@
                 <div class="comentarios">
                     {% for comentario in comentarios %}
                         <div class="comentario-item">
-                            <!-- Mostrar las estrellas según la calificación -->
                             <div class="estrellas">
                                 {% for i in "12345"|slice:":comentario.estrellas" %}★{% endfor %}
                                 {% for i in "12345"|slice:"comentario.estrellas:" %}☆{% endfor %}
                             </div>
-                            
                             <strong>{{ comentario.usuario.get_username }}</strong> - {{ comentario.fecha_creacion|date:"d M Y" }}
                             {% if comentario.verificado %}
                                  <span style="color: #28a745;">✔ Verificado</span>
@@ -239,7 +70,6 @@
                         <p>No hay comentarios aún. ¡Sé el primero en comentar!</p>
                     {% endfor %}
                 </div>
-                
             </div>
         </div>
 
@@ -256,64 +86,60 @@
             </div>
         </div>
     </div>
-        </div>
-    </div>
+</div>
 
+<script>
+    let currentImageIndex = 0;
+    const images = document.querySelectorAll('.carousel img');
 
-    <script>
-        let currentImageIndex = 0;
-        const images = document.querySelectorAll('.carousel img');
+    function showImage(index) {
+        images.forEach((img, i) => {
+            img.classList.remove('active');
+            if (i === index) img.classList.add('active');
+        });
+    }
 
-        function showImage(index) {
-            images.forEach((img, i) => {
-                img.classList.remove('active');
-                if (i === index) img.classList.add('active');
-            });
-        }
+    function nextImage() {
+        currentImageIndex = (currentImageIndex + 1) % images.length;
+        showImage(currentImageIndex);
+    }
 
-        function nextImage() {
-            currentImageIndex = (currentImageIndex + 1) % images.length;
-            showImage(currentImageIndex);
-        }
+    function prevImage() {
+        currentImageIndex = (currentImageIndex - 1 + images.length) % images.length;
+        showImage(currentImageIndex);
+    }
 
-        function prevImage() {
-            currentImageIndex = (currentImageIndex - 1 + images.length) % images.length;
-            showImage(currentImageIndex);
-        }
+    const btnComentarios = document.getElementById('btnComentarios');
+    const modalComentarios = document.getElementById('modalComentarios');
+    const closeModal = document.getElementById('closeModal');
 
+    btnComentarios.onclick = function() {
+        modalComentarios.style.display = 'flex';
+    }
+    closeModal.onclick = function() {
+        modalComentarios.style.display = 'none';
+    }
 
-        const btnComentarios = document.getElementById('btnComentarios');
-        const modalComentarios = document.getElementById('modalComentarios');
-        const closeModal = document.getElementById('closeModal');
-        
-        btnComentarios.onclick = function() {
-            modalComentarios.style.display = 'flex';
-        }
-        closeModal.onclick = function() {
+    // Mostrar y ocultar el formulario de comentarios
+    const btnComentar = document.getElementById('btnComentar');
+    const formularioComentario = document.getElementById('formularioComentario');
+    const closeFormulario = document.getElementById('closeFormulario');
+
+    btnComentar.onclick = function() {
+        formularioComentario.style.display = 'flex';
+    }
+    closeFormulario.onclick = function() {
+        formularioComentario.style.display = 'none';
+    }
+
+    // Cerrar el modal cuando se hace clic fuera de él
+    window.onclick = function(event) {
+        if (event.target == modalComentarios) {
             modalComentarios.style.display = 'none';
         }
-        
-        // Mostrar y ocultar el formulario de comentarios
-        const btnComentar = document.getElementById('btnComentar');
-        const formularioComentario = document.getElementById('formularioComentario');
-        const closeFormulario = document.getElementById('closeFormulario');
-        
-        btnComentar.onclick = function() {
-            formularioComentario.style.display = 'flex';
-        }
-        closeFormulario.onclick = function() {
+        if (event.target == formularioComentario) {
             formularioComentario.style.display = 'none';
         }
-        
-        // Cerrar el modal cuando se hace clic fuera de él
-        window.onclick = function(event) {
-            if (event.target == modalComentarios) {
-                modalComentarios.style.display = 'none';
-            }
-            if (event.target == formularioComentario) {
-                formularioComentario.style.display = 'none';
-            }
-        }
-    </script>
-</body>
-</html>
+    }
+</script>
+{% endblock %}

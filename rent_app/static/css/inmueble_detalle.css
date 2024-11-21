@@ -1,0 +1,175 @@
+/* detalle_inmueble.css */
+
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #f4f4f4;
+}
+
+.container {
+    max-width: 1500px;
+    margin: 20px auto;
+    background: #fff;
+    padding: 20px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    border-radius: 8px;
+    display: flex;
+    gap: 20px;
+}
+
+/* Carrusel de imágenes */
+.carousel {
+    flex: 1;
+    position: relative;
+    overflow: hidden;
+    border-radius: 8px;
+    max-height: 400px;
+}
+
+.carousel img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: none;
+}
+
+.carousel img.active {
+    display: block;
+}
+
+.carousel-controls {
+    position: absolute;
+    top: 50%;
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    transform: translateY(-50%);
+}
+
+.carousel-controls button {
+    background: rgba(0, 0, 0, 0.5);
+    border: none;
+    color: white;
+    font-size: 18px;
+    padding: 10px;
+    cursor: pointer;
+}
+
+/* Detalles del inmueble */
+.details {
+    flex: 1;
+}
+
+.details h2 {
+    font-size: 24px;
+    color: #333;
+    margin-bottom: 10px;
+}
+
+.details p {
+    margin: 5px 0;
+    color: #555;
+}
+
+.details strong {
+    color: #333;
+}
+
+/* Botones */
+.buttons {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 20px;
+}
+
+.buttons a {
+    text-decoration: none;
+    font-size: 16px;
+    font-weight: bold;
+    padding: 15px 30px;
+    border-radius: 8px;
+    display: inline-block;
+    text-align: center;
+    transition: background-color 0.3s ease;
+}
+
+.reserve-button {
+    background-color: #007bff;
+    border: 2px solid #007bff;
+}
+
+.reserve-button:hover {
+    background-color: #fff;
+    color: #007bff;
+}
+
+.whatsapp {
+    background-color: #25d366;
+    color: #fff;
+    border: 2px solid #25d366;
+}
+
+.whatsapp:hover {
+    background-color: #fff;
+    color: #25d366;
+}
+
+.calificar {
+    background-color: #f45c43;
+    color: #fff;
+    border: 2px solid #f45c43;
+}
+
+.calificar:hover {
+    background-color: #fff;
+    color: #f45c43;
+}
+
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 1;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgba(0, 0, 0, 0.4);
+    justify-content: center;
+    align-items: center;
+}
+
+.modal-content {
+    background-color: #fefefe;
+    padding: 20px;
+    border: 1px solid #888;
+    width: 80%;
+    max-width: 600px;
+    margin: auto;
+    border-radius: 10px;
+}
+
+.close {
+    color: #aaa;
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
+}
+
+.close:hover,
+.close:focus {
+    color: #000;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+.comentario-item {
+    border-bottom: 1px solid #ddd;
+    margin-bottom: 10px;
+    padding-bottom: 10px;
+}
+
+.estrellas {
+    color: #ffcc00;
+}

@@ -1,122 +1,42 @@
-<!DOCTYPE html>
-<html lang="es">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Calificar Inmueble</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 0;
-            padding: 0;
-            background-color: #f4f4f4;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
-        }
-        .container {
-            max-width: 700px;
-            width: 90%;
-            background: #fff;
-            padding: 40px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-            border-radius: 10px;
-        }
-        h1 {
-            text-align: center;
-            font-size: 24px;
-            color: #333;
-            margin-bottom: 30px;
-        }
-        .form-group {
-            margin-bottom: 20px;
-        }
-        .form-group label {
-            font-weight: bold;
-            color: #555;
-        }
-        .form-control {
-            width: 100%;
-            padding: 10px;
-            font-size: 14px;
-            border: 1px solid #ccc;
-            border-radius: 5px;
-            margin-bottom: 10px;
-        }
-        .form-control[type="checkbox"] {
-            width: auto;
-        }
-        .rating {
-            display: flex;
-            gap: 5px;
-            margin: 10px 0;
-        }
-        .rating input[type="radio"] {
-            display: none;
-        }
-        .rating label {
-            font-size: 2rem;
-            color: #ddd;
-            cursor: pointer;
-        }
-        .rating input[type="radio"]:checked ~ label {
-            color: #f39c12;
-        }
-        .submit-button {
-            text-align: center;
-            margin-top: 30px;
-        }
-        .submit-button button {
-            background-color: #007bff;
-            color: #fff;
-            padding: 15px 30px;
-            font-size: 18px;
-            font-weight: bold;
-            border: none;
-            border-radius: 8px;
-            cursor: pointer;
-            transition: all 0.3s;
-        }
-        .submit-button button:hover {
-            background-color: #0056b3;
-        }
-    </style>
-</head>
-<body>
-    <div class="container">
-        <h1>Califica el Inmueble</h1>
-        <form method="post">
-            {% csrf_token %}
-            <div class="form-group">
-                {{ form.fecha_inicio.label_tag }}
-                {{ form.fecha_inicio }}
+{% extends 'base.html' %}
+{% load static %}
+{% block extra_css %}
+    <link rel="stylesheet" href="{% static 'css/calificar_inmueble.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="container1">
+    <h1>Califica el Inmueble</h1>
+    <form method="post">
+        {% csrf_token %}
+        <div class="form-group">
+            {{ form.fecha_inicio.label_tag }}
+            {{ form.fecha_inicio }}
+        </div>
+        <div class="form-group">
+            {{ form.fecha_fin.label_tag }}
+            {{ form.fecha_fin }}
+        </div>
+        <div class="form-group">
+            {{ form.aun_renta }}
+            {{ form.aun_renta.label_tag }}
+        </div>
+        <div class="form-group">
+            <label>Valora este inmueble</label>
+            <div class="rating">
+                {% for i in "54321" %}
+                    <input type="radio" id="star{{ i }}" name="estrellas" value="{{ i }}">
+                    <label for="star{{ i }}">&#9733;</label>
+                {% endfor %}
             </div>
-            <div class="form-group">
-                {{ form.fecha_fin.label_tag }}
-                {{ form.fecha_fin }}
-            </div>
-            <div class="form-group">
-                {{ form.aun_renta }}
-                {{ form.aun_renta.label_tag }}
-            </div>
-            <div class="form-group">
-                <label>Valora este inmueble</label>
-                <div class="rating">
-                    {% for i in "54321" %}
-                        <input type="radio" id="star{{ i }}" name="estrellas" value="{{ i }}">
-                        <label for="star{{ i }}">&#9733;</label>
-                    {% endfor %}
-                </div>
-            </div>
-            <div class="form-group">
-                {{ form.comentario.label_tag }}
-                {{ form.comentario }}
-            </div>
-            <div class="submit-button">
-                <button type="submit">Calificar</button>
-            </div>
-        </form>
-    </div>
-</body>
-</html>
+        </div>
+        <div class="form-group">
+            {{ form.comentario.label_tag }}
+            {{ form.comentario }}
+        </div>
+        <div class="submit-button">
+            <button type="submit">Calificar</button>
+        </div>
+    </form>
+</div>
+{% endblock %}

@@ -1,244 +1,119 @@
-<!DOCTYPE html>
-<html lang="es">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Editar Inmueble</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 0;
-            padding: 0;
-            background-color: #f4f4f4;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
-        }
-        .container {
-            max-width: 1100px;
-            width: 90%;
-            background: #fff;
-            padding: 40px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-            border-radius: 10px;
-        }
-        h1 {
-            text-align: center;
-            font-size: 24px;
-            color: #333;
-            margin-bottom: 30px;
-        }
-        .form-section {
-            display: flex;
-            gap: 20px;
-        }
-        .left-column, .right-column {
-            flex: 1;
-        }
-        .form-group {
-            margin-bottom: 20px;
-        }
-        .form-group label {
-            display: block;
-            font-weight: bold;
-            margin-bottom: 5px;
-            color: #555;
-        }
-        .form-control, .form-control-file {
-            width: 100%;
-            padding: 10px;
-            font-size: 14px;
-            border: 1px solid #ccc;
-            border-radius: 5px;
-        }
-        .form-control-file {
-            height: 150px;
-            border: 2px dashed #bbb;
-            text-align: center;
-            font-size: 16px;
-            color: #555;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            position: relative;
-            border-radius: 10px;
-        }
-        .form-control-file::before {
-            content: "Cargar fotos";
-            font-weight: bold;
-            color: #333;
-            position: absolute;
-            top: 10px;
-            font-size: 16px;
-        }
-        .form-control-file::after {
-            content: "Mínimo 7 y máximo 15";
-            color: #777;
-            position: absolute;
-            bottom: 20px;
-            font-size: 12px;
-        }
-        .image-preview {
-            display: flex;
-            gap: 10px;
-            flex-wrap: wrap;
-            margin-top: 10px;
-        }
-        .image-preview img {
-            width: 100px;
-            height: 100px;
-            object-fit: cover;
-            border: 1px solid #ddd;
-            border-radius: 5px;
-        }
-        .image-preview-item {
-            position: relative;
-        }
-        .remove-image {
-            position: absolute;
-            top: 5px;
-            right: 5px;
-            background: #ff0000;
-            color: #fff;
-            border: none;
-            cursor: pointer;
-            padding: 5px;
-            border-radius: 50%;
-        }
-        .submit-button {
-            text-align: center;
-            margin-top: 30px;
-        }
-        .submit-button button {
-            background-color: #007bff;
-            color: #fff;
-            padding: 15px 30px;
-            font-size: 18px;
-            font-weight: bold;
-            border: 2px solid #007bff;
-            border-radius: 8px;
-            cursor: pointer;
-            width: 50%;
-            transition: all 0.3s;
-        }
-        .submit-button button:hover {
-            background-color: #fff;
-            color: #007bff;
-        }
-    </style>
-</head>
-<body>
-    <div class="container">
-        <h1>Editar Inmueble</h1>
-        <form method="post" enctype="multipart/form-data" id="edit-inmueble-form">
-            {% csrf_token %}
-            <div class="form-section">
-                <div class="left-column">
-                    <div class="form-group">
-                        <label for="imagenes">Imágenes actuales</label>
-                        <div class="image-preview" id="current-image-preview">
-                            {% for imagen in inmueble.imagenes.all %}
-                                <div class="image-preview-item" id="imagen-{{ imagen.id }}">
-                                    <img src="{{ imagen.imagen.url }}" alt="Imagen del inmueble">
-                                    <button type="button" class="remove-image" onclick="removeImage({{ imagen.id }})">&times;</button>
-                                </div>
-                            {% endfor %}
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <div class="form-control-file">
-                            <input type="file" id="imagenes" name="imagenes" multiple style="opacity: 0; position: absolute; width: 100%; height: 100%; cursor: pointer;" onchange="previewImages(event)">
-                        </div>
-                        <div class="image-preview" id="new-image-preview"></div>
+{% extends 'base.html' %}
+{% load static %}
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/editar_inmueble.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="editar-inmueble-container">
+    <h1>Editar Inmueble</h1>
+    <form method="post" enctype="multipart/form-data" id="edit-inmueble-form">
+        {% csrf_token %}
+        <div class="form-section">
+            <div class="left-column">
+                <div class="form-group">
+                    <label for="imagenes">Imágenes actuales</label>
+                    <div class="image-preview" id="current-image-preview">
+                        {% for imagen in inmueble.imagenes.all %}
+                            <div class="image-preview-item" id="imagen-{{ imagen.id }}">
+                                <img src="{{ imagen.imagen.url }}" alt="Imagen del inmueble">
+                                <button type="button" class="remove-image" onclick="removeImage({{ imagen.id }})">&times;</button>
+                            </div>
+                        {% endfor %}
                     </div>
                 </div>
-
-                <div class="right-column">
-                    <div class="form-group">
-                        <label for="numero_contacto">Número de contacto</label>
-                        <input type="text" name="numero_contacto" class="form-control" value="{{ inmueble.numero_contacto }}" required>
+                <div class="form-group">
+                    <div class="form-control-file">
+                        <input type="file" id="imagenes" name="imagenes" multiple style="opacity: 0; position: absolute; width: 100%; height: 100%; cursor: pointer;" onchange="previewImages(event)">
                     </div>
-                    <div class="form-group">
-                        <label for="tipo_inmueble">Selecciona el tipo de inmueble</label>
-                        <select name="tipo_inmueble" class="form-control" required>
-                            <option value="Departamento" {% if inmueble.tipo_inmueble == 'Departamento' %}selected{% endif %}>Departamento</option>
-                            <option value="Casa" {% if inmueble.tipo_inmueble == 'Casa' %}selected{% endif %}>Casa</option>
-                            <option value="Cuarto" {% if inmueble.tipo_inmueble == 'Cuarto' %}selected{% endif %}>Cuarto</option>
-                        </select>
-                    </div>
-                    <div class="form-group">
-                        <label for="distancia">Selecciona una distancia aproximada</label>
-                        <select name="distancia" class="form-control" required>
-                            <option value="0-5 km" {% if inmueble.distancia == '0-5 km' %}selected{% endif %}>0-5 km</option>
-                            <option value="5-10 km" {% if inmueble.distancia == '5-10 km' %}selected{% endif %}>5-10 km</option>
-                            <option value="10-15 km" {% if inmueble.distancia == '10-15 km' %}selected{% endif %}>10-15 km</option>
-                        </select>
-                    </div>
-                    <div class="form-group">
-                        <label for="precio">Precio</label>
-                        <input type="number" name="precio" class="form-control" placeholder="MXN" value="{{ inmueble.precio }}" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="direccion">Dirección</label>
-                        <input type="text" name="direccion" class="form-control" placeholder="Calle, Colonia, No" value="{{ inmueble.direccion }}" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="codigo_postal">Código Postal</label>
-                        <input type="text" name="codigo_postal" class="form-control" value="{{ inmueble.codigo_postal }}" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="descripcion">Descripción</label>
-                        <textarea name="descripcion" class="form-control" rows="5" required>{{ inmueble.descripcion }}</textarea>
-                    </div>
+                    <div class="image-preview" id="new-image-preview"></div>
                 </div>
             </div>
 
-            <div class="submit-button">
-                <button type="submit">Guardar cambios</button>
+            <div class="right-column">
+                <div class="form-group">
+                    <label for="numero_contacto">Número de contacto</label>
+                    <input type="text" name="numero_contacto" class="form-control" value="{{ inmueble.numero_contacto }}" required>
+                </div>
+                <div class="form-group">
+                    <label for="tipo_inmueble">Selecciona el tipo de inmueble</label>
+                    <select name="tipo_inmueble" class="form-control" required>
+                        <option value="Departamento" {% if inmueble.tipo_inmueble == 'Departamento' %}selected{% endif %}>Departamento</option>
+                        <option value="Casa" {% if inmueble.tipo_inmueble == 'Casa' %}selected{% endif %}>Casa</option>
+                        <option value="Cuarto" {% if inmueble.tipo_inmueble == 'Cuarto' %}selected{% endif %}>Cuarto</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="distancia">Selecciona una distancia aproximada</label>
+                    <select name="distancia" class="form-control" required>
+                        <option value="0-5 km" {% if inmueble.distancia == '0-5 km' %}selected{% endif %}>0-5 km</option>
+                        <option value="5-10 km" {% if inmueble.distancia == '5-10 km' %}selected{% endif %}>5-10 km</option>
+                        <option value="10-15 km" {% if inmueble.distancia == '10-15 km' %}selected{% endif %}>10-15 km</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="precio">Precio</label>
+                    <input type="number" name="precio" class="form-control" placeholder="MXN" value="{{ inmueble.precio }}" required>
+                </div>
+                <div class="form-group">
+                    <label for="direccion">Dirección</label>
+                    <input type="text" name="direccion" class="form-control" placeholder="Calle, Colonia, No" value="{{ inmueble.direccion }}" required>
+                </div>
+                <div class="form-group">
+                    <label for="codigo_postal">Código Postal</label>
+                    <input type="text" name="codigo_postal" class="form-control" value="{{ inmueble.codigo_postal }}" required>
+                </div>
+                <div class="form-group">
+                    <label for="descripcion">Descripción</label>
+                    <textarea name="descripcion" class="form-control" rows="5" required>{{ inmueble.descripcion }}</textarea>
+                </div>
             </div>
-        </form>
-    </div>
+        </div>
 
-    <script>
-        // Vista previa de las imágenes nuevas
-        function previewImages(event) {
-            const files = event.target.files;
-            const previewContainer = document.getElementById('new-image-preview');
-            previewContainer.innerHTML = ''; // Limpiar vistas previas existentes
+        <div class="submit-button">
+            <button type="submit">Guardar cambios</button>
+        </div>
+    </form>
+</div>
 
-            Array.from(files).forEach(file => {
-                const reader = new FileReader();
-                reader.onload = e => {
-                    const img = document.createElement('img');
-                    img.src = e.target.result;
-                    previewContainer.appendChild(img);
-                };
-                reader.readAsDataURL(file);
-            });
-        }
+<script>
+    // Vista previa de las imágenes nuevas
+    function previewImages(event) {
+        const files = event.target.files;
+        const previewContainer = document.getElementById('new-image-preview');
+        previewContainer.innerHTML = ''; // Limpiar vistas previas existentes
 
-        // Función para eliminar imagen con solicitud AJAX
-        function removeImage(imagenId) {
-            const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+        Array.from(files).forEach(file => {
+            const reader = new FileReader();
+            reader.onload = e => {
+                const img = document.createElement('img');
+                img.src = e.target.result;
+                previewContainer.appendChild(img);
+            };
+            reader.readAsDataURL(file);
+        });
+    }
 
-            fetch(`/eliminar-imagen/${imagenId}/`, {
-                method: 'POST',
-                headers: {
-                    'X-CSRFToken': csrfToken,
-                    'Content-Type': 'application/json'
-                },
-            }).then(response => {
-                if (response.ok) {
-                    // Remover la imagen del DOM si la eliminación es exitosa
-                    document.getElementById(`imagen-${imagenId}`).remove();
-                } else {
-                    console.error("Error al eliminar la imagen");
-                }
-            }).catch(error => {
-                console.error("Error:", error);
-            });
-        }
-    </script>
-</body>
-</html>
+    // Función para eliminar imagen con solicitud AJAX
+    function removeImage(imagenId) {
+        const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+
+        fetch(`/eliminar-imagen/${imagenId}/`, {
+            method: 'POST',
+            headers: {
+                'X-CSRFToken': csrfToken,
+                'Content-Type': 'application/json'
+            },
+        }).then(response => {
+            if (response.ok) {
+                // Remover la imagen del DOM si la eliminación es exitosa
+                document.getElementById(`imagen-${imagenId}`).remove();
+            } else {
+                console.error("Error al eliminar la imagen");
+            }
+        }).catch(error => {
+            console.error("Error:", error);
+        });
+    }
+</script>
+{% endblock %}

@@ -1,11 +1,10 @@
 # listings/forms.py
 from django import forms
 from django.contrib.auth import authenticate
+from django.contrib.auth.forms import PasswordChangeForm
 from django.contrib.auth.models import User
 from django.contrib.auth.forms import UserCreationForm
 from .models import Inmueble, ImagenInmueble, Calificacion
-
-
 
 class CustomUserCreationForm(UserCreationForm):
     first_name = forms.CharField(label="Nombre y Apellido", max_length=150, required=True)
@@ -23,6 +22,28 @@ class CustomUserCreationForm(UserCreationForm):
             user.save()
         return user
 
+class CustomUserUpdateForm(forms.ModelForm):
+    first_name = forms.CharField(label="Nombre y Apellido", max_length=150, required=True)
+    email = forms.EmailField(label="Correo electrónico", required=True)
+
+    class Meta:
+        model = User
+        fields = ("first_name", "email", "username")
+
+    def save(self, commit=True):
+        user = super().save(commit=False)
+        user.first_name = self.cleaned_data["first_name"]
+        user.email = self.cleaned_data["email"]
+        if commit:
+            user.save()
+        return user
+class CustomPasswordChangeForm(PasswordChangeForm):
+    def save(self, commit=True):
+        user = super().save(commit=commit)
+        # Actualizar la sesión con el nuevo hash para que el usuario no se cierre sesión
+        update_session_auth_hash(self.request, user)
+        return user
+    
 class EmailAuthenticationForm(forms.Form):
     email = forms.EmailField(label="Correo electrónico")
     password = forms.CharField(label="Contraseña", widget=forms.PasswordInput)
@@ -120,15 +141,7 @@ class CalificacionForm(forms.ModelForm):
             else:
                 field.widget.attrs['class'] = 'form-control'
 
-class CalificacionForm(forms.ModelForm):
-    class Meta:
-        model = Calificacion
-        fields = ['fecha_inicio', 'fecha_fin', 'aun_renta', 'estrellas', 'comentario']
-        widgets = {
-            'fecha_inicio': forms.DateInput(attrs={'type': 'date'}),
-            'fecha_fin': forms.DateInput(attrs={'type': 'date'}),
-            'comentario': forms.Textarea(attrs={'placeholder': 'Escribe tu comentario...'}),
-        }
+
 class ReservaForm(forms.Form):
     nombre = forms.CharField(label='Nombre', max_length=100, widget=forms.TextInput(attrs={'readonly': 'readonly'}))
     apellido = forms.CharField(label='Apellido', max_length=100, widget=forms.TextInput(attrs={'readonly': 'readonly'}))

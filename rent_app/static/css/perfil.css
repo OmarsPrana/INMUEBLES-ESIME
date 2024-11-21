@@ -1,0 +1,75 @@
+/* static/css/perfil.css */
+
+/* General styling for the profile page */
+body {
+    font-family: Arial, sans-serif;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    margin: 0;
+    background-color: #f4f4f4;
+}
+
+.profile-container {
+    width: 300px;
+    text-align: center;
+}
+
+h1 {
+    font-size: 24px;
+    margin-bottom: 20px;
+}
+
+.field {
+    background-color: #f0f0f0;
+    padding: 10px;
+    margin: 10px 0;
+    border-radius: 4px;
+}
+
+.buttons {
+    display: flex;
+    justify-content: space-between;
+}
+
+.button {
+    padding: 10px 20px;
+    border: 2px solid;
+    border-radius: 4px;
+    font-size: 16px;
+    cursor: pointer;
+    text-decoration: none;
+}
+
+.edit-button {
+    color: #007bff;
+    border-color: #007bff;
+}
+
+.edit-button:hover {
+    background-color: #007bff;
+    color: white;
+}
+
+.logout-button {
+    color: #ff0000;
+    border-color: #ff0000;
+}
+
+.logout-button:hover {
+    background-color: #ff0000;
+    color: white;
+}
+
+.properties-button {
+    color: #ff6600;
+    border-color: #ff6600;
+    display: inline-block;
+    margin-top: 20px;
+}
+
+.properties-button:hover {
+    background-color: #ff6600;
+    color: white;
+}
