@@ -12,14 +12,14 @@ body {
     min-height: 100vh;
 }
 
-.container {
+.publicar-inmueble-container, .editar-inmueble-container {
     max-width: 1100px;
     width: 90%;
     background: #ffffff;
     padding: 40px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
     border-radius: 10px;
- 
+}
 
 h1 {
     text-align: center;
@@ -57,7 +57,7 @@ h1 {
 }
 
 .form-control-file {
-    height: 300px;
+    height: 150px;
     border: 2px dashed #bbbbbb;
     text-align: center;
     font-size: 16px;
@@ -73,7 +73,7 @@ h1 {
     font-weight: bold;
     color: #333333;
     position: absolute;
-    top: 20px;
+    top: 10px;
     font-size: 16px;
 }
 
@@ -81,8 +81,45 @@ h1 {
     content: "Mínimo 7 y máximo 15";
     color: #777777;
     position: absolute;
-    bottom: 20px;
+    bottom: 10px;
     font-size: 12px;
+}
+
+/* Vista previa de las imágenes */
+.image-preview {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    margin-top: 10px;
+}
+
+.image-preview-item {
+    position: relative;
+}
+
+.image-preview img, .image-preview-item img {
+    width: 100px;
+    height: 100px;
+    object-fit: cover;
+    border-radius: 5px;
+    border: 1px solid #ddd;
+}
+
+.remove-image {
+    position: absolute;
+    top: 5px;
+    right: 5px;
+    background: #ff0000;
+    color: #fff;
+    border: none;
+    cursor: pointer;
+    padding: 5px;
+    border-radius: 50%;
+    font-size: 16px;
+}
+
+.remove-image:hover {
+    background: #a71d2a;
 }
 
 .submit-button {

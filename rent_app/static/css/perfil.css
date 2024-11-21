@@ -1,75 +1,156 @@
-/* static/css/perfil.css */
-
-/* General styling for the profile page */
 body {
     font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 20px;
+    background: #f8f8f8;
     display: flex;
     justify-content: center;
     align-items: center;
-    height: 100vh;
-    margin: 0;
-    background-color: #f4f4f4;
+    min-height: 100vh;
 }
 
-.profile-container {
-    width: 300px;
+/* Título */
+h1 {
+    font-size: 24px;
+    color: #333;
+    margin-bottom: 30px;
     text-align: center;
 }
 
-h1 {
-    font-size: 24px;
+/* Campos */
+.campo {
     margin-bottom: 20px;
+    width: 300px;
 }
 
-.field {
-    background-color: #f0f0f0;
-    padding: 10px;
-    margin: 10px 0;
+.campo-label {
+    font-size: 14px;
+    color: #333;
+    margin-bottom: 5px;
+}
+
+.campo-valor {
+    background-color: #e9e9e9;
+    padding: 8px;
+    font-size: 14px;
     border-radius: 4px;
+    text-align: left;
 }
 
-.buttons {
+/* Contenedor principal de botones */
+.contenedor-botones {
     display: flex;
-    justify-content: space-between;
+    flex-direction: column; /* Apilar los botones en columna */
+    align-items: center;
+    margin-top: 30px;
+    gap: 10px; /* Espaciado uniforme entre botones */
 }
 
-.button {
-    padding: 10px 20px;
-    border: 2px solid;
-    border-radius: 4px;
-    font-size: 16px;
+/* Botones de acción (Editar, Cerrar sesión) */
+.contenedor-acciones {
+    display: flex;
+    gap: 20px; /* Espaciado horizontal entre los botones */
+}
+
+/* Botón genérico */
+.btn {
+    padding: 6px 12px; /* Más delgados */
+    font-size: 14px; /* Texto ligeramente más pequeño */
+    border-radius: 6px; /* Bordes redondeados más suaves */
+    border: 2px solid transparent;
+    text-align: center;
     cursor: pointer;
-    text-decoration: none;
+    text-decoration: none; /* Sin subrayado */
+    font-weight: bold; /* Texto en negrita */
+    transition: background-color 0.3s ease, color 0.3s ease;
 }
 
-.edit-button {
-    color: #007bff;
-    border-color: #007bff;
+/* Botón Editar */
+.btn-editar {
+    border-color: #0066cc;
+    color: #0066cc;
+    background-color: transparent;
+    width: calc(50% - 10px); /* Alinear a la mitad del contenedor */
+    margin-right: auto; /* Alinearlo a la izquierda */
 }
 
-.edit-button:hover {
-    background-color: #007bff;
+.btn-editar:hover {
+    background-color: #0066cc;
     color: white;
 }
 
-.logout-button {
-    color: #ff0000;
-    border-color: #ff0000;
+/* Botón Cerrar Sesión */
+.btn-cerrar {
+    border-color: #cc0000;
+    color: #cc0000;
+    background-color: transparent;
+    width: calc(50% - 10px); /* Alinear a la mitad del contenedor */
+    margin-left: auto; /* Alinearlo a la derecha */
 }
 
-.logout-button:hover {
-    background-color: #ff0000;
+.btn-cerrar:hover {
+    background-color: #cc0000;
     color: white;
 }
 
-.properties-button {
-    color: #ff6600;
+.btn-inmuebles {
     border-color: #ff6600;
-    display: inline-block;
-    margin-top: 20px;
+    color: #ff6600;
+    background-color: transparent;
+    width: calc(100% - 25px); /* Coincidir con los bordes de los otros botones */
+    max-width: 300px; /* Limitar el ancho máximo */
+    text-align: center;
+    margin: 15px auto 0 auto; /* Centrar el botón y separarlo del grupo superior */
+    display: block;
 }
 
-.properties-button:hover {
+.btn-inmuebles:hover {
+    background-color: #ff6600;
+    color: white;
+}
+
+/* Contenedor de botones */
+.contenedor-botones {
+    display: flex;
+    flex-direction: column; /* Apilar botones en columna */
+    align-items: center;
+    margin-top: 30px;
+    gap: 10px; /* Espaciado entre botones */
+}
+
+/* Grupo superior (Editar y Cerrar Sesión) */
+.contenedor-acciones {
+    display: flex;
+    width: 300px; /* Alineado con el ancho de los campos grises */
+    justify-content: space-between; /* Separar botones al máximo */
+}
+
+/* Botón Cerrar Sesión */
+.btn-cerrar {
+    border-color: #cc0000;
+    color: #cc0000;
+    background-color: transparent;
+    width: calc(50% - 10px);
+}
+
+.btn-cerrar:hover {
+    background-color: #cc0000;
+    color: white;
+}
+
+/* Botón Mis Inmuebles */
+.btn-inmuebles {
+    border-color: #ff6600;
+    color: #ff6600;
+    background-color: transparent;
+    width: calc(100% - 25px);
+    max-width: 300px;
+    text-align: center;
+    margin: 15px auto 0 auto;
+    display: block;
+}
+
+.btn-inmuebles:hover {
     background-color: #ff6600;
     color: white;
 }

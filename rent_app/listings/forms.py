@@ -81,7 +81,7 @@ class InmuebleForm(forms.ModelForm):
             'precio': forms.NumberInput(attrs={'class': 'form-control'}),
             'numero_contacto': forms.TextInput(attrs={'class': 'form-control'}),
         }
-
+       
 
 class AsignarArrendatarioForm(forms.ModelForm):
     arrendatario = forms.ModelChoiceField(queryset=User.objects.all(), required=True, label="Selecciona al arrendatario")

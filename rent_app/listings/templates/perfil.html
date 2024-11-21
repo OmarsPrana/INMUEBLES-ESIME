@@ -1,4 +1,3 @@
-<!-- listings/templates/perfil.html -->
 {% extends 'base.html' %}
 {% load static %}
 {% block title %}Mi perfil{% endblock %}
@@ -7,22 +6,32 @@
 <link rel="stylesheet" href="{% static 'css/perfil.css' %}">
 {% endblock %}
 
-{% block content %}
-    <div class="profile-container">
-        <h1>Mi perfil</h1>
-
-        <div class="field"><strong>Mi nombre:</strong> {{ user.first_name }}</div>
-        <div class="field"><strong>Correo electrónico:</strong> {{ user.email }}</div>
-        <div class="field"><strong>Contraseña:</strong> ********************</div>
-
-        <div class="buttons">
-            <a href="{% url 'editar_perfil' %}" class="button edit-button">Editar</a>
-            <a href="{% url 'mis_inmuebles' %}" class="button properties-button">Mis inmuebles</a>
-            <form action="{% url 'logout' %}" method="post" style="display:inline;">
-                {% csrf_token %}
-                <button type="submit" class="button logout-button">Cerrar sesión</button>
-            </form>
-        </div>
+{% block content %}     
+    <h1>Mi perfil</h1>
+    
+    <div class="campo">
+        <div class="campo-label">Mi nombre</div>
+        <div class="campo-valor">{{ user.first_name }}</div>
     </div>
+    
+    <div class="campo">
+        <div class="campo-label">Correo electrónico</div>
+        <div class="campo-valor">{{ user.email }}</div>
+    </div>
+    
+    <div class="campo">
+        <div class="campo-label">Contraseña</div>
+        <div class="campo-valor">********</div>
+    </div>
+    
+    <div class="contenedor-botones">
+        <!-- Botones superiores alineados horizontalmente -->
+        <div class="contenedor-acciones">
+            <a href="{% url 'editar_perfil' %}" class="btn btn-editar">Editar</a>
+            <a href="{% url 'logout' %}" class="btn btn-cerrar">Cerrar sesión</a>
+        </div>
+    
+        <!-- Botón naranja separado debajo -->
+        <a href="{% url 'mis_inmuebles' %}" class="btn btn-inmuebles">Mis inmuebles</a>
+    </div>        
 {% endblock %}
-

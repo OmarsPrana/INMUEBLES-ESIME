@@ -16,8 +16,10 @@ class Inmueble(models.Model):
         ('5-10 km', '5-10 km'),
         ('10-15 km', '10-15 km'),
     ]
+    usuario = models.ForeignKey(User, on_delete=models.CASCADE, related_name='inmuebles')
+    
 
-    usuario = models.ForeignKey(User, on_delete=models.CASCADE)
+    
     tipo_inmueble = models.CharField(max_length=50, choices=TIPOS_INMUEBLE)
     distancia = models.CharField(max_length=50, choices=DISTANCIAS)
     direccion = models.CharField(max_length=255)
@@ -29,6 +31,7 @@ class Inmueble(models.Model):
     arrendador = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True, related_name="arrendados")
 
     arrendatario = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True, related_name="alquileres")
+    usuario = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     
 
 

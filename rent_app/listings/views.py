@@ -38,6 +38,7 @@ def home(request):
         inmuebles = inmuebles.filter(distancia=distancia)
 
     return render(request, 'home.html', {'inmuebles': inmuebles})
+
 class RegisterView(CreateView):
     form_class = CustomUserCreationForm
     template_name = 'register.html'
@@ -230,32 +231,46 @@ def reservar_inmueble(request, inmueble_id):
 @login_required
 def publicar_inmueble(request):
     if request.method == 'POST':
-        inmueble_form = InmuebleForm(request.POST)
+        inmueble_form = InmuebleForm(request.POST, request.FILES)
 
         if inmueble_form.is_valid():
-            # Guarda el inmueble
-            inmueble = inmueble_form.save(commit=False)
-            inmueble.arrendador = request.user  # Asigna automáticamente el usuario autenticado como arrendador
-            inmueble.save()
-
-            # Procesa las imágenes subidas
+            # Valida el número de imágenes antes de guardar el inmueble
             imagenes = request.FILES.getlist('imagenes')
             if len(imagenes) < 7 or len(imagenes) > 15:
-                return render(request, 'publicar_inmueble.html', {
-                    'inmueble_form': inmueble_form,
-                    'error': "Debes subir entre 7 y 15 imágenes."
-                })
+                messages.error(request, "Debes subir entre 7 y 15 imágenes.")
+                return render(request, 'publicar_inmueble.html', {'inmueble_form': inmueble_form})
 
-            for imagen in imagenes:
-                ImagenInmueble.objects.create(inmueble=inmueble, imagen=imagen)
+            # Guarda el inmueble
+            inmueble = inmueble_form.save(commit=False)
+            inmueble.usuario = request.user  # Asegúrate de asignar al usuario autenticado
+            
+            try:
+                inmueble.save()
+                print("Inmueble guardado correctamente:", inmueble)
 
-            return redirect('home')  # Redirige a la página principal
+                # Procesa las imágenes subidas
+                for imagen in imagenes:
+                    try:
+                        ImagenInmueble.objects.create(inmueble=inmueble, imagen=imagen)
+                    except Exception as e:
+                        print("Error al guardar la imagen:", str(e))
+                        messages.error(request, "Hubo un error al guardar la imagen. Inténtalo de nuevo.")
+                        return render(request, 'publicar_inmueble.html', {'inmueble_form': inmueble_form})
+
+                messages.success(request, "Inmueble publicado exitosamente.")
+                return redirect('home')
+            except Exception as e:
+                print("Error al guardar el inmueble:", str(e))
+                messages.error(request, "Hubo un error al publicar el inmueble. Inténtalo de nuevo.")
+        else:
+            # Imprime los errores del formulario si no es válido
+            print("Errores del formulario:", inmueble_form.errors)
+            messages.error(request, "Hubo un error en el formulario. Revisa la información e inténtalo de nuevo.")
 
     else:
         inmueble_form = InmuebleForm()
 
     return render(request, 'publicar_inmueble.html', {'inmueble_form': inmueble_form})
-
 @login_required
 def calificar_inmueble(request, inmueble_id):
     inmueble = get_object_or_404(Inmueble, id=inmueble_id)
