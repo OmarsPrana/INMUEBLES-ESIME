@@ -22,15 +22,59 @@
         </div>
         <div class="actions">
             <a href="{% url 'editar_inmueble' inmueble.id %}" class="btn-blue">Editar</a>
-            <form method="post" action="{% url 'eliminar_inmueble' inmueble.id %}">
-                {% csrf_token %}
-                <button type="submit" class="btn-red">Eliminar</button>
-            </form>
-            <a href="{% url 'asignar_arrendatario' inmueble.id %}" class="btn-orange">Asignar Arrendatario</a>
+            <button onclick="confirmDelete({{ inmueble.id }})" class="btn-red">Eliminar</button>
+            <a href="{% url 'asignar_arrendatario' inmueble.id %}" class="btn-orange">Calificaciones</a>
         </div>
     </div>
     {% empty %}
     <p>No tienes publicaciones aún.</p>
     {% endfor %}
 </div>
+
+<!-- Modal de Confirmación -->
+<div id="deleteModal" class="modal" style="display: none;">
+    <div class="modal-content">
+        <span class="close" onclick="closeModal()">&times;</span>
+        <h2>¿Estás seguro que quieres eliminar este inmueble?</h2>
+        <p>Esta acción no se puede deshacer.</p>
+        <div class="modal-buttons">
+            <button id="confirmDeleteButton" class="btn-red">Eliminar</button>
+            <button onclick="closeModal()" class="btn-cancel">Cancelar</button>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    let inmuebleIdToDelete;
+
+    function confirmDelete(inmuebleId) {
+        inmuebleIdToDelete = inmuebleId;
+        const modal = document.getElementById('deleteModal');
+        modal.style.display = 'flex';
+    }
+
+    function closeModal() {
+        const modal = document.getElementById('deleteModal');
+        modal.style.display = 'none';
+    }
+
+    document.getElementById('confirmDeleteButton').onclick = function() {
+        if (inmuebleIdToDelete) {
+            const form = document.createElement('form');
+            form.method = 'post';
+            form.action = `/eliminar-inmueble/${inmuebleIdToDelete}/`;
+
+            const csrfToken = document.createElement('input');
+            csrfToken.type = 'hidden';
+            csrfToken.name = 'csrfmiddlewaretoken';
+            csrfToken.value = '{{ csrf_token }}';
+
+            form.appendChild(csrfToken);
+            document.body.appendChild(form);
+            form.submit();
+        }
+    }
+</script>
 {% endblock %}

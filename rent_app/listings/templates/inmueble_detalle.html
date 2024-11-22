@@ -36,9 +36,7 @@
                 Contactar por WhatsApp
             </a>
 
-            <form method="get" action="{% url 'reservar_inmueble_formulario' inmueble.id %}">
-                <button type="submit" class="button reserve-button">Reservar Inmueble</button>
-            </form>
+            
 
             <!-- Botón de Calificar -->
             <a class="calificar" href="{% url 'calificar_inmueble' inmueble.id %}">
@@ -47,22 +45,25 @@
         </div>
 
         <button id="btnComentarios">Ver Comentarios</button>
-
-        <!-- Modal de comentarios -->
         <div id="modalComentarios" class="modal">
             <div class="modal-content">
                 <span class="close" id="closeModal">&times;</span>
                 <h2>Comentarios</h2>
-                <div class="comentarios">
+                <div class="comentarios-contenedor">
                     {% for comentario in comentarios %}
                         <div class="comentario-item">
                             <div class="estrellas">
-                                {% for i in "12345"|slice:":comentario.estrellas" %}★{% endfor %}
-                                {% for i in "12345"|slice:"comentario.estrellas:" %}☆{% endfor %}
+                                {% for i in "12345" %}
+                                    {% if i <= comentario.estrellas|stringformat:"i" %}
+                                        <span class="estrella llena">&#9733;</span>
+                                    {% else %}
+                                        <span class="estrella vacia">&#9734;</span>
+                                    {% endif %}
+                                {% endfor %}
                             </div>
-                            <strong>{{ comentario.usuario.get_username }}</strong> - {{ comentario.fecha_creacion|date:"d M Y" }}
+                            <strong>{{ comentario.usuario.first_name }} {{ comentario.usuario.last_name }}</strong> - {{ comentario.fecha_creacion|date:"d M Y" }}
                             {% if comentario.verificado %}
-                                 <span style="color: #28a745;">✔ Verificado</span>
+                                <span style="color: #28a745;">✔ Verificado</span>
                             {% endif %}
                             <p>{{ comentario.comentario }}</p>
                         </div>
@@ -72,6 +73,10 @@
                 </div>
             </div>
         </div>
+
+<!-- Modal de comentarios -->
+
+
 
         <!-- Formulario de comentarios (se muestra al hacer clic en "Comentar") -->
         <div id="formularioComentario" class="modal">
@@ -134,12 +139,9 @@
 
     // Cerrar el modal cuando se hace clic fuera de él
     window.onclick = function(event) {
-        if (event.target == modalComentarios) {
-            modalComentarios.style.display = 'none';
-        }
-        if (event.target == formularioComentario) {
-            formularioComentario.style.display = 'none';
-        }
+    if (event.target == modalComentarios) {
+        modalComentarios.style.display = 'none';
     }
+}
 </script>
 {% endblock %}

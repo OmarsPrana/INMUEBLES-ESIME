@@ -1,32 +1,15 @@
-/* mis_inmuebles.css */
-
-/* General */
-body {
-    font-family: Arial, sans-serif;
-    margin: 0;
-    padding: 0;
-    background-color: #f4f4f4;
-    color: #333;
-}
-
+/* Contenedor principal */
 .container {
     max-width: 1200px;
     margin: 20px auto;
-    padding: 20px;
-    background-color: #ffffff;
-    border-radius: 8px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    font-family: Arial, sans-serif;
 }
 
-/* Título */
 .title {
     text-align: center;
     margin-bottom: 30px;
-    font-size: 28px;
-    color: #333;
 }
 
-/* Inmuebles */
 .inmueble {
     display: flex;
     align-items: center;
@@ -34,14 +17,8 @@ body {
     border: 1px solid #ddd;
     border-radius: 10px;
     padding: 15px;
-    margin-bottom: 20px;
+    margin-bottom: 15px;
     background-color: #f9f9f9;
-    transition: transform 0.3s, box-shadow 0.3s;
-}
-
-.inmueble:hover {
-    transform: scale(1.02);
-    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
 }
 
 .inmueble img {
@@ -51,7 +28,6 @@ body {
     border-radius: 10px;
 }
 
-/* Información del inmueble */
 .info {
     flex: 1;
     margin-left: 20px;
@@ -59,17 +35,15 @@ body {
 
 .info h3 {
     margin: 0;
-    font-size: 20px;
+    font-size: 18px;
     color: #333;
 }
 
 .info p {
     margin: 5px 0;
     color: #555;
-    line-height: 1.5;
 }
 
-/* Acciones */
 .actions {
     display: flex;
     gap: 10px;
@@ -83,39 +57,105 @@ body {
     border-radius: 5px;
     font-size: 14px;
     cursor: pointer;
-    transition: background-color 0.3s ease, color 0.3s ease;
 }
 
-/* Botones de acción */
+/* Botones */
 .btn-blue {
     background-color: #007bff;
     color: white;
-    border: 2px solid #007bff;
 }
 
 .btn-blue:hover {
-    background-color: #ffffff;
-    color: #007bff;
+    background-color: #0056b3;
 }
 
 .btn-red {
     background-color: #dc3545;
     color: white;
-    border: 2px solid #dc3545;
 }
 
 .btn-red:hover {
-    background-color: #ffffff;
-    color: #dc3545;
+    background-color: #a71d2a;
 }
 
 .btn-orange {
     background-color: #fd7e14;
     color: white;
-    border: 2px solid #fd7e14;
 }
 
 .btn-orange:hover {
-    background-color: #ffffff;
-    color: #fd7e14;
+    background-color: #dc6e0f;
+}
+
+/* Estilos para el modal */
+/* Modal de confirmación */
+.modal {
+    display: none; /* Ocultar por defecto */
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5); /* Fondo semi-transparente */
+    justify-content: center;
+    align-items: center;
+}
+
+.modal-content {
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 10px;
+    width: 90%;
+    max-width: 500px;
+    text-align: center;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.modal-buttons {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 20px;
+}
+
+.btn-red {
+    background-color: #cc0000;
+    color: #fff;
+    padding: 10px 20px;
+    font-size: 16px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+}
+
+.btn-red:hover {
+    background-color: #a71d2a;
+}
+
+.btn-cancel {
+    background-color: #aaa;
+    color: #fff;
+    padding: 10px 20px;
+    font-size: 16px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+}
+
+.btn-cancel:hover {
+    background-color: #888;
+}
+
+.close {
+    position: absolute;
+    top: 10px;
+    right: 20px;
+    font-size: 28px;
+    font-weight: bold;
+    color: #333;
+    cursor: pointer;
+}
+
+.close:hover {
+    color: #000;
 }

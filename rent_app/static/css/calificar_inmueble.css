@@ -52,20 +52,30 @@ h1 {
 /* Rating */
 .rating {
     display: flex;
-    gap: 5px;
-    margin: 10px 0;
+    direction: rtl; /* Cambia la dirección a la derecha a izquierda para que el primer ítem sea el más bajo */
 }
 
 .rating input[type="radio"] {
-    display: none;
+    display: none; /* Esconde los inputs de radio */
 }
 
 .rating label {
     font-size: 2rem;
-    color: #ddd;
+    color: #ddd; /* Gris para las estrellas vacías */
     cursor: pointer;
 }
 
+.rating label:hover,
+.rating label:hover ~ label,
+.rating input[type="radio"]:checked ~ label {
+    color: #f39c12; /* Amarillo para las estrellas llenas */
+}
+
+.rating label:hover ~ label {
+    color: #f39c12;
+}
+
+/* Esto asegura que las estrellas seleccionadas se llenen comenzando por la izquierda */
 .rating input[type="radio"]:checked ~ label {
     color: #f39c12;
 }

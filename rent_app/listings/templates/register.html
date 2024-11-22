@@ -1,35 +1,32 @@
-<!-- listings/templates/register.html -->
 {% extends 'base.html' %}
 {% load static %}
-{% block title %}Registrarse{% endblock %}
+
+{% block title %}Registro de Cuenta{% endblock %}
 
 {% block extra_css %}
 <link rel="stylesheet" href="{% static 'css/register.css' %}">
 {% endblock %}
 
 {% block content %}
-<div class="register-container">
-    <h1>Por favor ingresa tus datos</h1>
-    <p>Todos los campos son obligatorios</p>
-    <form method="post">
-        {% csrf_token %}
+<div class="main-content">
+    <div class="register-container">
+        <h1>Registro</h1>
         
-        {{ form.first_name.label_tag }}
-        {{ form.first_name }}
-        
-        {{ form.email.label_tag }}
-        {{ form.email }}
-        
-        <label for="id_username">Nombre de usuario</label>
-        {{ form.username }}
-        
-        <label for="id_password1">Contraseña</label>
-        {{ form.password1 }}
-        
-        <label for="id_password2">Confirma tu contraseña</label>
-        {{ form.password2 }}
-        
-        <button type="submit">Crear mi cuenta</button>
-    </form>
+        {% if messages %}
+            <div class="messages">
+                {% for message in messages %}
+                    <div class="message {{ message.tags }}">{{ message }}</div>
+                {% endfor %}
+            </div>
+        {% endif %}
+
+        <form method="post">
+            {% csrf_token %}
+            {{ form.as_p }}
+            <button type="submit">Registrarse</button>
+        </form>
+
+        <p>¿Ya tienes una cuenta? <a href="{% url 'login' %}">Iniciar sesión</a></p>
+    </div>
 </div>
 {% endblock %}

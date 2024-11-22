@@ -38,7 +38,6 @@ class Inmueble(models.Model):
     def __str__(self):
         return f"{self.tipo_inmueble} en {self.direccion}"
 
-
 class HistorialRenta(models.Model):
     usuario = models.ForeignKey(User, on_delete=models.CASCADE)
     inmueble = models.ForeignKey(Inmueble, on_delete=models.CASCADE)
@@ -66,6 +65,7 @@ class Calificacion(models.Model):
     
     estrellas = models.PositiveSmallIntegerField(choices=[(i, f"{i} estrellas") for i in range(1, 6)])
     comentario = models.TextField()
+    verificado = False
 
 
     def save(self, *args, **kwargs):

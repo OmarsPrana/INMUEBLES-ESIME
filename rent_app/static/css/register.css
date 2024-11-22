@@ -9,7 +9,12 @@ body {
     height: 100vh;
     margin: 0;
     background-color: #f4f4f4;
+    padding-top: 80px;
 }
+.main-content {
+    margin-top: 80px; /* Ajusta este valor según la altura del header */
+}
+
 
 .register-container {
     width: 350px;

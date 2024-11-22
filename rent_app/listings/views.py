@@ -14,6 +14,7 @@ from django.contrib.auth.models import User
 from .forms import InmuebleForm, CalificacionForm, AsignarArrendatarioForm, ReservaForm,CustomUserUpdateForm, CustomPasswordChangeForm
 from .models import ImagenInmueble, Inmueble, HistorialRenta, Calificacion
 from django.http import Http404
+from django.urls import reverse_lazy
 
 
 def home(request):
@@ -43,7 +44,7 @@ def home(request):
 class RegisterView(CreateView):
     form_class = CustomUserCreationForm
     template_name = 'register.html'
-    success_url = settings.LOGIN_REDIRECT_URL
+    success_url = reverse_lazy('login')  # Redirigir al login después del registro exitoso
 
     def form_valid(self, form):
         response = super().form_valid(form)
@@ -95,6 +96,20 @@ def detalle_inmueble(request, inmueble_id):
         'comentario_form': comentario_form
     })
 
+def ver_comentarios(request, inmueble_id):
+    # Obtiene el inmueble por ID
+    inmueble = get_object_or_404(Inmueble, id=inmueble_id)
+    calificaciones = Calificacion.objects.filter(inmueble=inmueble)
+
+    # Marca los comentarios del arrendatario como "verificados"
+    for comentario in calificaciones:
+        comentario.verificado = comentario.usuario == inmueble.arrendatario
+
+    return render(request, 'ver_comentarios.html', {
+        'inmueble': inmueble,
+        'comentarios': calificaciones,
+        'arrendatario': inmueble.arrendatario
+    })
 @login_required
 def perfil(request):
     return render(request, 'perfil.html', {'user': request.user})
@@ -186,23 +201,26 @@ def eliminar_inmueble(request, inmueble_id):
     return render(request, 'eliminar_inmueble.html', {'inmueble': inmueble})
 @login_required
 def asignar_arrendatario(request, inmueble_id):
-    inmueble = get_object_or_404(Inmueble, id=inmueble_id, arrendador=request.user)
-
-    if request.method == "POST":
-        arrendatario_id = request.POST.get("arrendatario")
-        arrendatario = User.objects.get(id=arrendatario_id)
-        inmueble.arrendatario = arrendatario
-        inmueble.save()
-        return redirect('inmueble_detalle', inmueble_id=inmueble.id)
+    inmueble = get_object_or_404(Inmueble, id=inmueble_id)
     
-    # Obtener todos los usuarios para seleccionar como arrendatario
-    usuarios = User.objects.all()
+    # Obtener los usuarios que han comentado el inmueble
+    usuarios_comentaron = User.objects.filter(calificacion__inmueble=inmueble).distinct()
 
+    if request.method == 'POST':
+        arrendatario_id = request.POST.get('arrendatario')
+        if arrendatario_id:
+            arrendatario = get_object_or_404(User, id=arrendatario_id)
+            inmueble.arrendatario = arrendatario
+            inmueble.save()
+            messages.success(request, "Arrendatario asignado exitosamente.")
+            return redirect('inmueble_detalle', inmueble_id=inmueble_id)
+        else:
+            messages.error(request, "Por favor, selecciona un arrendatario.")
+    
     return render(request, 'asignar_arrendatario.html', {
         'inmueble': inmueble,
-        'usuarios': usuarios
+        'usuarios': usuarios_comentaron,
     })
-
 @login_required
 def reservar_inmueble_formulario(request, inmueble_id):
     inmueble = get_object_or_404(Inmueble, id=inmueble_id)
@@ -294,12 +312,6 @@ def calificar_inmueble(request, inmueble_id):
 
     return render(request, 'calificar_inmueble.html', {'form': form, 'inmueble': inmueble})
     
-
-
-
-
-
-
 def inmueble_detalle(request, inmueble_id):
     inmueble = get_object_or_404(Inmueble, id=inmueble_id)
     

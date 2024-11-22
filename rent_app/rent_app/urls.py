@@ -32,7 +32,8 @@ urlpatterns = [
     path('perfil/', views.perfil, name='perfil'),  # Ruta para el perfil del usuario
     path('perfil/editar/', views.editar_perfil, name='editar_perfil'),  # Ruta para editar perfil
     path('mis_inmuebles/', views.mis_inmuebles, name='mis_inmuebles'),  # Ruta para ver mis inmuebles
-    path('inmueble/<int:inmueble_id>/', views.inmueble_detalle, name='inmueble_detalle'),  # Ruta para detalle de inmueble
+    path('inmueble/<int:inmueble_id>/', views.inmueble_detalle, name='inmueble_detalle'), 
+    path('inmueble/<int:inmueble_id>/', views.detalle_inmueble, name='detalle_inmueble'), # Ruta para detalle de inmueble
     path('logout/', LogoutView.as_view(next_page='home'), name='logout'),  # Ruta de cierre de sesión
     path('publicar/', views.publicar_inmueble, name='publicar_inmueble'), 
     path('editar-inmueble/<int:inmueble_id>/', views.editar_inmueble, name='editar_inmueble'),

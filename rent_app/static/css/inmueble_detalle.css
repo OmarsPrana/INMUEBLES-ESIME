@@ -129,7 +129,8 @@ body {
 .modal {
     display: none;
     position: fixed;
-    z-index: 1;
+    z-index: 1000;
+    
     left: 0;
     top: 0;
     width: 100%;
@@ -138,6 +139,7 @@ body {
     background-color: rgba(0, 0, 0, 0.4);
     justify-content: center;
     align-items: center;
+    padding: 20px;
 }
 
 .modal-content {
@@ -148,6 +150,8 @@ body {
     max-width: 600px;
     margin: auto;
     border-radius: 10px;
+    max-height: 80vh; /* Limitar la altura del modal */
+    overflow-y: auto;
 }
 
 .close {
@@ -155,6 +159,7 @@ body {
     float: right;
     font-size: 28px;
     font-weight: bold;
+    z-index: 1001;
 }
 
 .close:hover,
@@ -163,13 +168,31 @@ body {
     text-decoration: none;
     cursor: pointer;
 }
+.comentarios-contenedor {
+    max-height: 60vh; /* Limitar la altura de la sección de comentarios */
+    overflow-y: auto; /* Agregar barra de desplazamiento si hay muchos comentarios */
+}
 
 .comentario-item {
     border-bottom: 1px solid #ddd;
     margin-bottom: 10px;
     padding-bottom: 10px;
+   * Agregar barra de desplazamiento si hay muchos comentarios */
 }
 
 .estrellas {
-    color: #ffcc00;
+    margin-bottom: 10px;
+}
+
+.estrella {
+    font-size: 2rem;
+    margin-right: 2px;
+}
+
+.estrella.llena {
+    color: #ffcc00; /* Amarillo para las estrellas llenas */
+}
+
+.estrella.vacia {
+    color: #ccc; /* Gris para las estrellas vacías */
 }
