@@ -1,8 +1,8 @@
 .editar-perfil-container {
-    max-width: 600px;
-    margin: 40px auto;
+    max-width: 400px;
+    margin: 50px auto;
     background: #ffffff;
-    padding: 20px;
+    padding: 50px;
     border-radius: 10px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     text-align: center;
@@ -64,9 +64,9 @@ p {
 }
 
 .btn-guardar-cambios {
-    background-color: #28a745;
+    background-color: #218838;
     color: white;
-    border: none;
+    border: 2px solid #218838;
     padding: 10px 20px;
     margin-top: 10px;
     border-radius: 5px;
@@ -75,7 +75,9 @@ p {
 }
 
 .btn-guardar-cambios:hover {
-    background-color: #218838;
+    background-color: #ffffff;
+    color: #218838;
+    
 }
 
 .btn-cancelar {

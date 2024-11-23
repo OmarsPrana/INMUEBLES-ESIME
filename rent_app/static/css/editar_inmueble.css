@@ -12,8 +12,8 @@ body {
 }
 
 .editar-inmueble-container {
-    max-width: 1100px;
-    width: 90%;
+    width: 1400px;
+ 
     background: #fff;
     padding: 40px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
@@ -57,7 +57,7 @@ h1 {
 
 .form-control-file {
     height: 150px;
-    border: 2px dashed #bbb;
+    border: 1px dashed #bbb;
     text-align: center;
     font-size: 16px;
     color: #555;
@@ -65,6 +65,8 @@ h1 {
     align-items: center;
     justify-content: center;
     position: relative;
+    top: 0px;   /* Empuja hacia abajo desde su posición original */
+    left: -30px;
     border-radius: 10px;
 }
 
@@ -108,33 +110,35 @@ h1 {
     position: absolute;
     top: 5px;
     right: 5px;
-    background: #ff0000;
+    background: #6b6161;
     color: #fff;
     border: none;
     cursor: pointer;
     padding: 5px;
-    border-radius: 50%;
+    border-radius: 60px;
 }
-
 .submit-button {
     text-align: center;
     margin-top: 30px;
 }
 
 .submit-button button {
-    background-color: #007bff;
+    background-color: #f45c43;
     color: #fff;
     padding: 15px 30px;
     font-size: 18px;
     font-weight: bold;
-    border: 2px solid #007bff;
+    border: 2px solid #f45c43;
     border-radius: 8px;
     cursor: pointer;
     width: 50%;
     transition: all 0.3s;
+    position: relative;
+    top: 0px;   /* Empuja hacia abajo desde su posición original */
+    left: 360px;
 }
 
 .submit-button button:hover {
     background-color: #fff;
-    color: #007bff;
+    color: #f45c43;
 } 
