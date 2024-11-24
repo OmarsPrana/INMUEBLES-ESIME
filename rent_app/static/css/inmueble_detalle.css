@@ -7,9 +7,10 @@ body {
     background-color: #f4f4f4;
 }
 
-.container {
-    max-width: 1500px;
-    margin: 20px auto;
+.detail-container {
+    max-width: 1400px;
+    margin: 150px auto;
+    height: 570px;
     background: #fff;
     padding: 20px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
@@ -57,25 +58,113 @@ body {
 }
 
 /* Detalles del inmueble */
-.details {
-    flex: 1;
-}
-
 .details h2 {
+    position: relative;
+    top: -20px;   /* Empuja hacia abajo desde su posición original */
+    left: 0px;
     font-size: 24px;
     color: #333;
     margin-bottom: 10px;
 }
 
 .details p {
-    margin: 5px 0;
+    margin: 3px 0;
     color: #555;
 }
 
-.details strong {
-    color: #333;
+.details strong-p {
+    color: #000000;
+    font-weight: bold;
+}
+.details strong-des{
+
+    color: #000000;
+    font-weight: bold;
+
 }
 
+.details strong-des{
+    position: relative;
+    top: -130px;   /* Empuja hacia abajo desde su posición original */
+    left: 0px;
+    color: #000000;
+    font-weight: bold;
+    width: 30px;
+    height: 400;
+
+}
+
+.caja {
+    position: relative;
+    top: 310px;   /* Empuja hacia abajo desde su posición original */
+    left: -760px;
+    font-family: sans-serif;
+    font-size: 15px;
+    font-weight: 200;
+    color: #ffffff;
+    background: #ffffff;
+    margin: 0 0 25px;
+    height: auto;
+    width: 580px;
+    border-radius: 20px;
+    border: 0.1px solid #000;
+    overflow: hidden;
+    padding: 20px;
+    }
+
+.caja1 {
+        position: relative;
+        top: 240px;   /* Empuja hacia abajo desde su posición original */
+        left: -132px;
+        font-family: sans-serif;
+        font-size: 15px;
+        font-weight: 200;
+        color: #ffffff;
+        background: #ffffff;
+        margin: 0 0 25px;
+        height: auto;
+        width: 75px;
+        border-radius: 20px;
+        border: 0.1px solid #000;
+        overflow: hidden;
+        padding: 20px;
+        }
+    
+.caja2 {
+            position: relative;
+            top: -127px;   /* Empuja hacia abajo desde su posición original */
+            left: -1px;
+            font-family: sans-serif;
+            font-size: 15px;
+            font-weight: 200;
+            color: #ffffff;
+            background: #ffffff;
+            margin: 0 0 25px;
+            height: 220px;
+            width: 600px;
+            border-radius: 20px;
+            border: 0.1px solid #000;
+            overflow: hidden;
+            padding: 20px;
+            }
+ .caja3 {
+                position: relative;
+                top: -122px;   /* Empuja hacia abajo desde su posición original */
+                left: 0px;
+                font-family: sans-serif;
+                font-size: 15px;
+                font-weight: 200;
+                color: #ffffff;
+                background: #ffffff;
+                margin: 0 0 25px;
+                height: auto;
+                width: 600px;
+                border-radius: 20px;
+                border: 0.1px solid #000;
+                overflow: hidden;
+                padding: 20px;
+                }
+    
 /* Botones */
 .buttons {
     display: flex;
@@ -105,9 +194,15 @@ body {
 }
 
 .whatsapp {
+    position: relative;
+    top: -122px;   /* Empuja hacia abajo desde su posición original */
+    left: 0px;
+    width: 250px;
+    height: 30px;
     background-color: #25d366;
     color: #fff;
-    border: 2px solid #25d366;
+    border: 2px solid #25d366; 
+    
 }
 
 .whatsapp:hover {
@@ -116,6 +211,11 @@ body {
 }
 
 .calificar {
+    position: relative;
+    top: -122px;   /* Empuja hacia abajo desde su posición original */
+    left: -4px;
+    width: 250px;
+    height: 30px;
     background-color: #f45c43;
     color: #fff;
     border: 2px solid #f45c43;
@@ -124,6 +224,23 @@ body {
 .calificar:hover {
     background-color: #fff;
     color: #f45c43;
+}
+
+#btnComentarios {
+    position: relative;
+    top: -190px;   /* Empuja hacia abajo desde su posición original */
+    left: -757px;
+    color: rgb(0, 0, 0); /* Texto blanco */
+    padding: 10px 20px; /* Espaciado interno */
+    border: none; /* Sin borde */
+    border-radius: 5px; /* Bordes redondeados */
+    cursor: pointer; /* Cambia el cursor al pasar sobre el botón */
+    font-size: 16px; /* Tamaño de fuente */
+    transition: background-color 0.3s ease; /* Efecto de transición */
+}
+
+#btnComentarios:hover {
+    background-color: #636363; /* Azul más oscuro al pasar el mouse */
 }
 
 .modal {
@@ -162,7 +279,7 @@ body {
     z-index: 1001;
 }
 
-.close:hover,
+
 .close:focus {
     color: #000;
     text-decoration: none;

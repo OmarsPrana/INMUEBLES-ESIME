@@ -68,9 +68,13 @@ h1 {
 /* Botón Editar */
 .btn-editar {
     border-color: #0066cc;
+    position: relative;
+    top: 15px;   /* Empuja hacia abajo desde su posición original */
+    left: 0px;
     color: #0066cc;
     background-color: transparent;
     width: calc(50% - 10px); /* Alinear a la mitad del contenedor */
+    height: 23px;
     margin-right: auto; /* Alinearlo a la izquierda */
 }
 
@@ -81,7 +85,10 @@ h1 {
 
 /* Botón Cerrar Sesión */
 .btn-cerrar {
-    border-color: #cc0000;
+    border-color: #da0000;
+      position: relative;
+    top: 15px;   /* Empuja hacia abajo desde su posición original */
+    left: 0px;
     color: #cc0000;
     background-color: transparent;
     width: calc(50% - 10px); /* Alinear a la mitad del contenedor */

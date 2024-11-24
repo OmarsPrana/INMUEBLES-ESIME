@@ -7,7 +7,7 @@
 {% endblock %}
 
 {% block content %}
-<div class="container">
+<div class="detail-container">
     <!-- Carrusel -->
     <div class="carousel">
         {% for imagen in imagenes %}
@@ -22,12 +22,12 @@
     <!-- Detalles del inmueble -->
     <div class="details">
         <h2>{{ inmueble.tipo_inmueble }}</h2>
-        <p><strong>Precio:</strong> MXN {{ inmueble.precio }} mensuales</p>
-        <p><strong>Distancia:</strong> {{ inmueble.distancia }}</p>
-        <p><strong>Dirección:</strong> {{ inmueble.direccion }}</p>
-        <p><strong>Código Postal:</strong> {{ inmueble.codigo_postal }}</p>
-        <p><strong>Descripción:</strong> {{ inmueble.descripcion }}</p>
-        <p><strong>Contacto:</strong> {{ inmueble.numero_contacto }}</p>
+        <p><strong-p>Precio:</strong> MXN {{ inmueble.precio }} mensuales &nbsp;&nbsp;&nbsp;&nbsp;&nbsp&nbsp;&nbsp;&nbsp;&nbsp;&nbsp&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <strong-d>Distancia:</strong> {{ inmueble.distancia }}</p>
+        <p> <p id="p0"><p class="caja">{{ inmueble.direccion }}</p>
+        <p class="caja1"><strong-cod>CP:</strong> {{inmueble.codigo_postal }}</p>
+        <p><strong-des>Descripción:</strong> </p>
+        <p class="caja2"><strong-cod></strong>  {{ inmueble.descripcion }}</p>
+        <p class="caja3"><strong-cod>Contacto:</strong>  {{ inmueble.numero_contacto }}</p>
 
         <!-- Botones -->
         <div class="buttons">
