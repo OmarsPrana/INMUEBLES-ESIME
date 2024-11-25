@@ -1,0 +1,52 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}Pagar con Stripe{% endblock %}
+
+
+<style>
+    .stripe-form-container {
+        max-width: 500px;
+        margin: 50px auto;
+        padding: 20px;
+        background-color: #f9f9f9;
+        border-radius: 8px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        text-align: center;
+    }
+
+    .stripe-form-container h2 {
+        margin-bottom: 20px;
+        color: #333;
+    }
+
+    .stripe-form-container p {
+        margin-bottom: 15px;
+        color: #666;
+    }
+
+    .stripe-form-container button {
+        background-color: #635bff;
+        color: white;
+        padding: 10px 20px;
+        font-size: 16px;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+    }
+
+    .stripe-form-container button:hover {
+        background-color: #5046e5;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="stripe-form-container">
+    <h2>Pagar con Stripe</h2>
+    <p>Haz clic en el botón de abajo para proceder con el pago seguro mediante Stripe.</p>
+    <form action="{% url 'crear_sesion_pago' %}" method="post">
+        {% csrf_token %}
+        <button type="submit">Pagar con Stripe</button>
+    </form>
+</div>
+{% endblock %}

@@ -24,7 +24,7 @@
         <h2>{{ inmueble.tipo_inmueble }}</h2>
         <p><strong-p>Precio:</strong> MXN {{ inmueble.precio }} mensuales &nbsp;&nbsp;&nbsp;&nbsp;&nbsp&nbsp;&nbsp;&nbsp;&nbsp;&nbsp&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <strong-d>Distancia:</strong> {{ inmueble.distancia }}</p>
         <p> <p id="p0"><p class="caja">{{ inmueble.direccion }}</p>
-        <p class="caja1"><strong-cod>CP:</strong> {{inmueble.codigo_postal }}</p>
+        <p class="caja1"><strong-cod>CP:</strong> {{ inmueble.codigo_postal }}</p>
         <p><strong-des>Descripción:</strong> </p>
         <p class="caja2"><strong-cod></strong>  {{ inmueble.descripcion }}</p>
         <p class="caja3"><strong-cod>Contacto:</strong>  {{ inmueble.numero_contacto }}</p>
@@ -35,15 +35,35 @@
             <a class="whatsapp" href="https://wa.me/{{ inmueble.numero_contacto|default:'' }}" target="_blank">
                 Contactar por WhatsApp
             </a>
-
-            
+            <button id="btnReservar" class="reservar-btn">Reservar Inmueble</button>
 
             <!-- Botón de Calificar -->
-            <a class="calificar" href="{% url 'calificar_inmueble' inmueble.id %}">
-                Calificar
-            </a>
+            {% if request.user.is_authenticated %}
+                {% if reserva_activa %}
+                    <a class="calificar" href="{% url 'calificar_inmueble' inmueble.id %}">Comentar y Calificar</a>
+                {% else %}
+                    <p>Debes reservar este inmueble antes de poder calificarlo.</p>
+                {% endif %}
+            {% else %}
+                <p>Debes iniciar sesión para poder comentar.</p>
+            {% endif %}
         </div>
 
+        <!-- Modal para reservar -->
+        <div id="modalReservar" class="modal">
+            <div class="modal-content">
+                <span class="close" id="closeReservarModal">&times;</span>
+                <h2>Reservar Inmueble</h2>
+                <p>Completa tu reserva pagando el monto correspondiente.</p>
+                <!-- Formulario de Stripe -->
+                <form action="{% url 'crear_sesion_pago' %}" method="post">
+                    {% csrf_token %}
+                    <button type="submit" class="reservar-btn">Pagar con Stripe</button>
+                </form>
+            </div>
+        </div>
+
+        <!-- Botón y modal para comentarios -->
         <button id="btnComentarios">Ver Comentarios</button>
         <div id="modalComentarios" class="modal">
             <div class="modal-content">
@@ -73,23 +93,6 @@
                 </div>
             </div>
         </div>
-
-<!-- Modal de comentarios -->
-
-
-
-        <!-- Formulario de comentarios (se muestra al hacer clic en "Comentar") -->
-        <div id="formularioComentario" class="modal">
-            <div class="modal-content">
-                <span class="close" id="closeFormulario">&times;</span>
-                <h3>Agregar un comentario</h3>
-                <form method="post">
-                    {% csrf_token %}
-                    {{ comentario_form.as_p }}
-                    <button type="submit">Comentar</button>
-                </form>
-            </div>
-        </div>
     </div>
 </div>
 
@@ -114,34 +117,34 @@
         showImage(currentImageIndex);
     }
 
+    const btnReservar = document.getElementById('btnReservar');
+    const modalReservar = document.getElementById('modalReservar');
+    const closeReservarModal = document.getElementById('closeReservarModal');
+
+    btnReservar.onclick = function () {
+        modalReservar.style.display = 'flex';
+    };
+
+    closeReservarModal.onclick = function () {
+        modalReservar.style.display = 'none';
+    };
+
     const btnComentarios = document.getElementById('btnComentarios');
     const modalComentarios = document.getElementById('modalComentarios');
     const closeModal = document.getElementById('closeModal');
 
-    btnComentarios.onclick = function() {
+    btnComentarios.onclick = function () {
         modalComentarios.style.display = 'flex';
-    }
-    closeModal.onclick = function() {
+    };
+
+    closeModal.onclick = function () {
         modalComentarios.style.display = 'none';
-    }
+    };
 
-    // Mostrar y ocultar el formulario de comentarios
-    const btnComentar = document.getElementById('btnComentar');
-    const formularioComentario = document.getElementById('formularioComentario');
-    const closeFormulario = document.getElementById('closeFormulario');
-
-    btnComentar.onclick = function() {
-        formularioComentario.style.display = 'flex';
-    }
-    closeFormulario.onclick = function() {
-        formularioComentario.style.display = 'none';
-    }
-
-    // Cerrar el modal cuando se hace clic fuera de él
-    window.onclick = function(event) {
-    if (event.target == modalComentarios) {
-        modalComentarios.style.display = 'none';
-    }
-}
+    window.onclick = function (event) {
+        if (event.target === modalComentarios) {
+            modalComentarios.style.display = 'none';
+        }
+    };
 </script>
 {% endblock %}

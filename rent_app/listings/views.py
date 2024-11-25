@@ -1,7 +1,10 @@
 # listings/views.py
+from decouple import config
 from django.contrib.auth import login
 from django.contrib import messages
-from django.http import HttpResponseForbidden
+from django.conf import settings
+
+from django.http import HttpResponse
 from django.conf import settings
 from django.views.generic import CreateView
 from django.views import View
@@ -12,9 +15,18 @@ from .forms import CustomUserCreationForm, EmailAuthenticationForm
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 from .forms import InmuebleForm, CalificacionForm, AsignarArrendatarioForm, ReservaForm,CustomUserUpdateForm, CustomPasswordChangeForm
-from .models import ImagenInmueble, Inmueble, HistorialRenta, Calificacion
+from .models import ImagenInmueble, Inmueble,Calificacion, Reserva
 from django.http import Http404
 from django.urls import reverse_lazy
+import stripe
+import json
+from django.http import JsonResponse
+from django.views.decorators.csrf import csrf_exempt
+
+
+stripe.api_key = config('STRIPE_SECRET_KEY')
+endpoint_secret = config('STRIPE_WEBHOOK_SECRET')
+
 
 
 def home(request):
@@ -80,7 +92,7 @@ def detalle_inmueble(request, inmueble_id):
     comentarios = inmueble.comentarios.all()
 
     if request.method == 'POST':
-        comentario_form = ComentarioForm(request.POST)
+        comentario_form = CalificacionForm(request.POST)
         if comentario_form.is_valid():
             comentario = comentario_form.save(commit=False)
             comentario.usuario = request.user
@@ -88,7 +100,7 @@ def detalle_inmueble(request, inmueble_id):
             comentario.save()
             return redirect('detalle_inmueble', inmueble_id=inmueble.id)
     else:
-        comentario_form = ComentarioForm()
+        comentario_form = CalificacionForm()
 
     return render(request, 'detalle_inmueble.html', {
         'inmueble': inmueble,
@@ -298,13 +310,19 @@ def publicar_inmueble(request):
 def calificar_inmueble(request, inmueble_id):
     inmueble = get_object_or_404(Inmueble, id=inmueble_id)
 
+    # Verificar si el usuario tiene una reserva activa y pagada para este inmueble
+    if not Reserva.objects.filter(usuario=request.user, inmueble=inmueble, estado_pago=True).exists():
+        return render(request, 'error.html', {
+            'mensaje': 'Debes reservar este inmueble y completar el pago antes de poder calificarlo.'
+        })
+
     if request.method == 'POST':
         form = CalificacionForm(request.POST)
         if form.is_valid():
             calificacion = form.save(commit=False)
             calificacion.inmueble = inmueble
-            if request.user.is_authenticated:
-                calificacion.usuario = request.user  # Solo guarda el usuario si está autenticado
+            calificacion.usuario = request.user  # Asignar el usuario autenticado
+            calificacion.verificado = True  # Marcar la calificación como verificada
             calificacion.save()
             return redirect('inmueble_detalle', inmueble_id=inmueble.id)
     else:
@@ -313,18 +331,122 @@ def calificar_inmueble(request, inmueble_id):
     return render(request, 'calificar_inmueble.html', {'form': form, 'inmueble': inmueble})
     
 def inmueble_detalle(request, inmueble_id):
+    # Obtén el inmueble
     inmueble = get_object_or_404(Inmueble, id=inmueble_id)
     
+    # Obtén las calificaciones asociadas al inmueble
     comentarios = Calificacion.objects.filter(inmueble=inmueble)
+    
+    # Inicializa el formulario de calificación
     comentario_form = CalificacionForm()
+    reserva_activa = Reserva.objects.filter(
+    usuario=request.user,
+    inmueble=inmueble,
+    estado_pago=True).exists()
 
+   
+    
+    # Contexto para pasar a la plantilla
     context = {
         'inmueble': inmueble,
         'imagenes': inmueble.imagenes.all(),
         'comentarios': comentarios,
-        'comentario_form': comentario_form
+        'comentario_form': comentario_form,
+        'reserva_activa': reserva_activa,
     }
+    
+    # Renderiza la plantilla con el contexto
     return render(request, 'inmueble_detalle.html', context)
 
 
+@login_required
+def crear_sesion_pago(request):
+    stripe.api_key = config('STRIPE_SECRET_KEY')
+    if request.method == 'POST':
+        try:
+            session = stripe.checkout.Session.create(
+                payment_method_types=['card'],
+                line_items=[{
+                    'price_data': {
+                        'currency': 'mxn',
+                        'product_data': {
+                            'name': 'Reserva del Inmueble',
+                        },
+                        'unit_amount': 2000,  # Precio en centavos (20.00 MXN)
+                    },
+                    'quantity': 1,
+                }],
+                mode='payment',
+                success_url='https://zany-meme-v7574q565643w999-8000.app.github.dev/pago-exitoso/',
+                cancel_url='https://zany-meme-v7574q565643w999-8000.app.github.dev/pago-cancelado/',
+                metadata={
+                    'usuario_id': request.user.id,
+                    'inmueble_id': request.POST.get('inmueble_id'),
+                }
+            )
+            return redirect(session.url, code=303)
+        except Exception as e:
+            return JsonResponse({'error': str(e)}, status=400)
 
+def pago_exitoso(request):
+    return render(request, 'pago_exitoso.html')
+
+def pago_cancelado(request):
+    return render(request, 'pago_cancelado.html')
+
+
+
+endpoint_secret = config('STRIPE_WEBHOOK_SECRET')
+
+@csrf_exempt
+def stripe_webhook(request):
+    if request.method != 'POST':
+        return HttpResponse(status=405)  # Método no permitido
+
+    payload = request.body
+    sig_header = request.META.get('HTTP_STRIPE_SIGNATURE')
+    event = None
+
+    try:
+        # Construir el evento verificando la firma con el endpoint_secret
+        event = stripe.Webhook.construct_event(
+            payload, sig_header, endpoint_secret, tolerance=600  # 10 minutos de tolerancia
+        )
+    except ValueError as e:
+        # Error con el cuerpo de la solicitud
+        print("Invalid payload")
+        return JsonResponse({'error': 'Invalid payload'}, status=400)
+    except stripe.error.SignatureVerificationError as e:
+        # Firma del webhook inválida
+        print("Invalid signature")
+        return JsonResponse({'error': 'Invalid signature'}, status=400)
+    except Exception as e:
+        # Manejar cualquier error inesperado
+        print(f"Unexpected error: {str(e)}")
+        return JsonResponse({'error': 'Unexpected error'}, status=400)
+
+    # Imprimir el tipo de evento recibido para confirmar que llegó correctamente
+    print(f"Evento recibido: {event['type']}")
+
+    # Manejar el evento específico `checkout.session.completed`
+    if event['type'] == 'checkout.session.completed':
+        session = event['data']['object']
+
+        # Obtener los detalles relevantes de la sesión
+        usuario_id = session.get('metadata', {}).get('usuario_id')
+        inmueble_id = session.get('metadata', {}).get('inmueble_id')
+
+        if usuario_id and inmueble_id:
+            try:
+                # Buscar la reserva correspondiente y actualizar el estado del pago
+                usuario = User.objects.get(id=usuario_id)
+                inmueble = Inmueble.objects.get(id=inmueble_id)
+                reserva = Reserva.objects.get(usuario=usuario, inmueble=inmueble)
+                reserva.estado_pago = True
+                reserva.save()
+                print(f"Reserva actualizada: {reserva}")
+            except (User.DoesNotExist, Inmueble.DoesNotExist, Reserva.DoesNotExist) as e:
+                print(f"Error al buscar la reserva: {str(e)}")
+
+    # Retornar una respuesta exitosa para confirmar que el webhook fue recibido
+    return JsonResponse({'status': 'success'}, status=200)

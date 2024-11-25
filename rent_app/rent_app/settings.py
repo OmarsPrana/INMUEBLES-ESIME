@@ -9,7 +9,9 @@ https://docs.djangoproject.com/en/5.1/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/5.1/ref/settings/
 """
+from decouple import config
 
+import stripe
 from pathlib import Path
 from django.contrib.messages import constants as messages
 import os
@@ -27,8 +29,11 @@ SECRET_KEY = "django-insecure-*81!_no_(+rjbeg$i&ys-drc@i+cp8ij5-64ida3lo48@t-cut
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
-
+ALLOWED_HOSTS = [
+    'localhost',
+    '127.0.0.1',
+    'zany-meme-v7574q565643w999-8000.app.github.dev',
+]
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
@@ -39,7 +44,11 @@ LOGIN_REDIRECT_URL = '/'  # Redirige a la página principal después de iniciar 
 
 LOGIN_URL = '/login/' 
 
+STRIPE_PUBLIC_KEY = config('STRIPE_PUBLIC_KEY')
+STRIPE_SECRET_KEY = config('STRIPE_SECRET_KEY')
 
+stripe.api_version = '2024-10-28.acacia'
+endpoint_secret = config('STRIPE_WEBHOOK_SECRET')
 
 MESSAGE_TAGS = {
     messages.SUCCESS: 'success',

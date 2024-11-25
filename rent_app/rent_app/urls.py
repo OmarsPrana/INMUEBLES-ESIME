@@ -24,6 +24,7 @@ from django.conf.urls.static import static
 from listings.views import CustomLoginView, RegisterView
 from django.contrib.auth.views import LogoutView 
 
+
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', views.home, name='home'),
@@ -44,6 +45,10 @@ urlpatterns = [
     path('inmueble/<int:inmueble_id>/reservar/', views.reservar_inmueble, name='reservar_inmueble'),
     path('inmueble/<int:inmueble_id>/reservar/formulario/', views.reservar_inmueble_formulario, name='reservar_inmueble_formulario'),
     path('logout_and_redirect_mis_inmuebles/', views.logout_and_redirect_mis_inmuebles, name='logout_and_redirect_mis_inmuebles'),
+    path('crear-sesion-pago/', views.crear_sesion_pago, name='crear_sesion_pago'),
+    path('pago-exitoso/', views.pago_exitoso, name='pago_exitoso'),
+    path('pago-cancelado/', views.pago_cancelado, name='pago_cancelado'),
+    path('stripe-webhook/', views.stripe_webhook, name='stripe_webhook'),
      # Ruta para publicar un inmueble
 ]
 

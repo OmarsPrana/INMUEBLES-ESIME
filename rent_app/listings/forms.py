@@ -5,6 +5,8 @@ from django.contrib.auth.forms import PasswordChangeForm
 from django.contrib.auth.models import User
 from django.contrib.auth.forms import UserCreationForm
 from .models import Inmueble, ImagenInmueble, Calificacion
+from listings.models import Calificacion, Reserva
+from django.core.exceptions import ValidationError
 
 class CustomUserCreationForm(UserCreationForm):
     first_name = forms.CharField(label="Nombre y Apellido", max_length=150, required=True)
@@ -146,13 +148,28 @@ class CalificacionForm(forms.ModelForm):
         }
 
     def __init__(self, *args, **kwargs):
+        # Captura del usuario y del inmueble para validaciones adicionales
+        self.usuario = kwargs.pop('usuario', None)
+        self.inmueble = kwargs.pop('inmueble', None)
         super(CalificacionForm, self).__init__(*args, **kwargs)
-        for field in self.fields.values():
-            if field.widget.attrs.get('class'):
-                field.widget.attrs['class'] += ' form-control'
-            else:
-                field.widget.attrs['class'] = 'form-control'
 
+    def clean(self):
+        # Limpia y valida los datos
+        cleaned_data = super().clean()
+        fecha_inicio = cleaned_data.get('fecha_inicio')
+        fecha_fin = cleaned_data.get('fecha_fin')
+        aun_renta = cleaned_data.get('aun_renta')
+
+        # Validación de fechas
+        if fecha_inicio and fecha_fin:
+            if fecha_fin < fecha_inicio:
+                raise ValidationError('La fecha de fin no puede ser anterior a la fecha de inicio.')
+
+        # Validar que el usuario tiene una reserva activa con el inmueble
+        if not Reserva.objects.filter(usuario=self.usuario, inmueble=self.inmueble, estado_pago=True).exists():
+            raise ValidationError('Debes reservar este inmueble y completar el pago antes de calificarlo.')
+
+        return cleaned_data
 
 class ReservaForm(forms.Form):
     nombre = forms.CharField(label='Nombre', max_length=100, widget=forms.TextInput(attrs={'readonly': 'readonly'}))
