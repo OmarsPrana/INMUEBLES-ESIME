@@ -166,8 +166,10 @@ class CalificacionForm(forms.ModelForm):
                 raise ValidationError('La fecha de fin no puede ser anterior a la fecha de inicio.')
 
         # Validar que el usuario tiene una reserva activa con el inmueble
-        if not Reserva.objects.filter(usuario=self.usuario, inmueble=self.inmueble, estado_pago=True).exists():
-            raise ValidationError('Debes reservar este inmueble y completar el pago antes de calificarlo.')
+        # Asegúrate de que self.usuario e inmueble estén definidos
+        if self.usuario and self.inmueble:
+            if not Reserva.objects.filter(usuario=self.usuario, inmueble=self.inmueble, estado_pago=True).exists():
+                raise ValidationError('Debes reservar este inmueble y completar el pago antes de calificarlo.')
 
         return cleaned_data
 

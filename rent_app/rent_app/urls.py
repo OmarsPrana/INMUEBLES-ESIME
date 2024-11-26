@@ -40,15 +40,13 @@ urlpatterns = [
     path('editar-inmueble/<int:inmueble_id>/', views.editar_inmueble, name='editar_inmueble'),
     path('eliminar-imagen/<int:imagen_id>/', views.eliminar_imagen, name='eliminar_imagen'),
     path('eliminar-inmueble/<int:inmueble_id>/', views.eliminar_inmueble, name='eliminar_inmueble'),
-    path('inmueble/<int:inmueble_id>/asignar-arrendatario/', views.asignar_arrendatario, name='asignar_arrendatario'),
     path('inmueble/<int:inmueble_id>/calificar/', views.calificar_inmueble, name='calificar_inmueble'),
-    path('inmueble/<int:inmueble_id>/reservar/', views.reservar_inmueble, name='reservar_inmueble'),
-    path('inmueble/<int:inmueble_id>/reservar/formulario/', views.reservar_inmueble_formulario, name='reservar_inmueble_formulario'),
     path('logout_and_redirect_mis_inmuebles/', views.logout_and_redirect_mis_inmuebles, name='logout_and_redirect_mis_inmuebles'),
     path('crear-sesion-pago/', views.crear_sesion_pago, name='crear_sesion_pago'),
     path('pago-exitoso/', views.pago_exitoso, name='pago_exitoso'),
     path('pago-cancelado/', views.pago_cancelado, name='pago_cancelado'),
     path('stripe-webhook/', views.stripe_webhook, name='stripe_webhook'),
+    path('inmuebles-rentados/', views.inmuebles_rentados, name='inmuebles_rentados'),
      # Ruta para publicar un inmueble
 ]
 

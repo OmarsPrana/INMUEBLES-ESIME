@@ -1,0 +1,23 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="container">
+    <h1>Mis Inmuebles Rentados</h1>
+
+    {% if reservas_rentadas %}
+        <ul class="inmuebles-lista">
+            {% for reserva in reservas_rentadas %}
+                <li>
+                    <h3>{{ reserva.inmueble.tipo_inmueble }} - {{ reserva.inmueble.direccion }}</h3>
+                    <p><strong>Precio:</strong> MXN {{ reserva.inmueble.precio }}</p>
+                    <p><strong>Fecha de reserva:</strong> {{ reserva.fecha_reserva|date:"d M Y" }}</p>
+                    <a href="{% url 'inmueble_detalle' reserva.inmueble.id %}" class="btn">Ver Detalles</a>
+                </li>
+            {% endfor %}
+        </ul>
+    {% else %}
+        <p>No has rentado ningún inmueble aún.</p>
+    {% endif %}
+</div>
+{% endblock %}

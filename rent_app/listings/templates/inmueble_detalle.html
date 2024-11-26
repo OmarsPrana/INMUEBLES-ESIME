@@ -22,12 +22,12 @@
     <!-- Detalles del inmueble -->
     <div class="details">
         <h2>{{ inmueble.tipo_inmueble }}</h2>
-        <p><strong-p>Precio:</strong> MXN {{ inmueble.precio }} mensuales &nbsp;&nbsp;&nbsp;&nbsp;&nbsp&nbsp;&nbsp;&nbsp;&nbsp;&nbsp&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <strong-d>Distancia:</strong> {{ inmueble.distancia }}</p>
-        <p> <p id="p0"><p class="caja">{{ inmueble.direccion }}</p>
-        <p class="caja1"><strong-cod>CP:</strong> {{ inmueble.codigo_postal }}</p>
-        <p><strong-des>Descripción:</strong> </p>
-        <p class="caja2"><strong-cod></strong>  {{ inmueble.descripcion }}</p>
-        <p class="caja3"><strong-cod>Contacto:</strong>  {{ inmueble.numero_contacto }}</p>
+        <p><strong>Precio:</strong> MXN {{ inmueble.precio }} mensuales &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <strong>Distancia:</strong> {{ inmueble.distancia }}</p>
+        <p id="p0"><p class="caja">{{ inmueble.direccion }}</p>
+        <p class="caja1"><strong>CP:</strong> {{ inmueble.codigo_postal }}</p>
+        <p><strong>Descripción:</strong></p>
+        <p class="caja2">{{ inmueble.descripcion }}</p>
+        <p class="caja3"><strong>Contacto:</strong>  {{ inmueble.numero_contacto }}</p>
 
         <!-- Botones -->
         <div class="buttons">
@@ -35,32 +35,16 @@
             <a class="whatsapp" href="https://wa.me/{{ inmueble.numero_contacto|default:'' }}" target="_blank">
                 Contactar por WhatsApp
             </a>
-            <button id="btnReservar" class="reservar-btn">Reservar Inmueble</button>
+            
+            <form id="reserva-form" action="{% url 'crear_sesion_pago' %}" method="post">
+                {% csrf_token %}
+                <input type="hidden" name="inmueble_id" value="{{ inmueble.id }}">
+                <button type="submit">Reservar y Pagar</button>
+            </form>
 
-            <!-- Botón de Calificar -->
-            {% if request.user.is_authenticated %}
-                {% if reserva_activa %}
-                    <a class="calificar" href="{% url 'calificar_inmueble' inmueble.id %}">Comentar y Calificar</a>
-                {% else %}
-                    <p>Debes reservar este inmueble antes de poder calificarlo.</p>
-                {% endif %}
-            {% else %}
-                <p>Debes iniciar sesión para poder comentar.</p>
+            {% if reserva_activa %}
+                <a href="{% url 'calificar_inmueble' inmueble.id %}" class="btn btn-secondary">Calificar Inmueble</a>
             {% endif %}
-        </div>
-
-        <!-- Modal para reservar -->
-        <div id="modalReservar" class="modal">
-            <div class="modal-content">
-                <span class="close" id="closeReservarModal">&times;</span>
-                <h2>Reservar Inmueble</h2>
-                <p>Completa tu reserva pagando el monto correspondiente.</p>
-                <!-- Formulario de Stripe -->
-                <form action="{% url 'crear_sesion_pago' %}" method="post">
-                    {% csrf_token %}
-                    <button type="submit" class="reservar-btn">Pagar con Stripe</button>
-                </form>
-            </div>
         </div>
 
         <!-- Botón y modal para comentarios -->
@@ -116,18 +100,6 @@
         currentImageIndex = (currentImageIndex - 1 + images.length) % images.length;
         showImage(currentImageIndex);
     }
-
-    const btnReservar = document.getElementById('btnReservar');
-    const modalReservar = document.getElementById('modalReservar');
-    const closeReservarModal = document.getElementById('closeReservarModal');
-
-    btnReservar.onclick = function () {
-        modalReservar.style.display = 'flex';
-    };
-
-    closeReservarModal.onclick = function () {
-        modalReservar.style.display = 'none';
-    };
 
     const btnComentarios = document.getElementById('btnComentarios');
     const modalComentarios = document.getElementById('modalComentarios');
