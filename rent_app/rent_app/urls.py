@@ -47,7 +47,7 @@ urlpatterns = [
     path('pago-cancelado/', views.pago_cancelado, name='pago_cancelado'),
     path('stripe-webhook/', views.stripe_webhook, name='stripe_webhook'),
     path('inmuebles-rentados/', views.inmuebles_rentados, name='inmuebles_rentados'),
-    
+    path('inmueble/<int:inmueble_id>/volver-a-rentar/', views.volver_a_rentar, name='volver_a_rentar'),
      # Ruta para publicar un inmueble
 ]
 

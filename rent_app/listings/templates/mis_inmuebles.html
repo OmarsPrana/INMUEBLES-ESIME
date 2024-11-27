@@ -18,19 +18,17 @@
                     <img src="{% static 'images/load-default.jpg' %}" alt="Imagen no disponible">
                 {% endif %}
                 <div class="info">
-                    <h3>{{ inmueble.tipo_inmueble }} MXN {{ inmueble.precio }}</h3>
+                    <h3>{{ inmueble.tipo_inmueble }} - MXN {{ inmueble.precio }}</h3>
                     <p>{{ inmueble.descripcion }}</p>
                 </div>
                 <div class="actions">
                     <a href="{% url 'editar_inmueble' inmueble.id %}" class="btn-blue">Editar</a>
                     <button onclick="confirmDelete({{ inmueble.id }})" class="btn-red">Eliminar</button>
-
-                    <!-- Mostrar "Volver a Publicar" si el inmueble ya está rentado -->
                     {% if inmueble.estado == 'rentado' %}
-                        <form action="{% url 'volver_a_publicar' inmueble.id %}" method="post">
-                            {% csrf_token %}
-                            <button type="submit" class="btn btn-secondary">Volver a Publicar</button>
-                        </form>
+                       <form action="{% url 'volver_a_rentar' inmueble.id %}" method="post">
+                           {% csrf_token %}
+                           <button type="submit" class="btn btn-secondary">Volver a Rentar</button>
+                       </form>
                     {% endif %}
                 </div>
             </div>
@@ -71,16 +69,19 @@
 
     document.getElementById('confirmDeleteButton').onclick = function() {
         if (inmuebleIdToDelete) {
+            // Crear un formulario para eliminar el inmueble
             const form = document.createElement('form');
             form.method = 'post';
             form.action = `/eliminar-inmueble/${inmuebleIdToDelete}/`;
 
-            const csrfToken = document.createElement('input');
-            csrfToken.type = 'hidden';
-            csrfToken.name = 'csrfmiddlewaretoken';
-            csrfToken.value = '{{ csrf_token }}';
+            // Agregar CSRF token al formulario
+            const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+            const csrfInput = document.createElement('input');
+            csrfInput.type = 'hidden';
+            csrfInput.name = 'csrfmiddlewaretoken';
+            csrfInput.value = csrfToken;
 
-            form.appendChild(csrfToken);
+            form.appendChild(csrfInput);
             document.body.appendChild(form);
             form.submit();
         }

@@ -135,7 +135,27 @@ def inmuebles_rentados(request):
     reservas_rentadas = Reserva.objects.filter(usuario=usuario, estado_pago=True)
     return render(request, 'inmuebles_rentados.html', {'reservas_rentadas': reservas_rentadas})
     # Filtrar los inmuebles que el usuario ha rentado con el pago completado
-   
+@login_required
+def volver_a_rentar(request, inmueble_id):
+    inmueble = get_object_or_404(Inmueble, id=inmueble_id, usuario=request.user)
+
+    # Verifica si el inmueble está actualmente rentado
+    if inmueble.estado == 'rentado':
+        # Cambiar el estado a disponible
+        inmueble.estado = 'disponible'
+        inmueble.save()
+
+        # Eliminar la reserva asociada si existe
+        reserva = Reserva.objects.filter(inmueble=inmueble, estado_pago=True).first()
+        if reserva:
+            reserva.delete()
+            messages.success(request, 'El inmueble ha vuelto a estar disponible y la reserva ha sido eliminada.')
+
+    else:
+        messages.error(request, 'El inmueble no se encuentra en estado de renta.')
+
+    return redirect('mis_inmuebles')
+
 @login_required
 def editar_perfil(request):
     if request.method == 'POST':

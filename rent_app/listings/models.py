@@ -16,6 +16,11 @@ class Inmueble(models.Model):
         ('5-10 km', '5-10 km'),
         ('10-15 km', '10-15 km'),
     ]
+    ESTADOS = [
+        ('disponible', 'Disponible'),
+        ('rentado', 'Rentado')  # Rentado también cubrirá "reservado"
+    ]
+    estado = models.CharField(max_length=20, choices=ESTADOS, default='disponible')
     
     usuario = models.ForeignKey(User, on_delete=models.CASCADE, related_name='inmuebles')
     
