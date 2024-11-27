@@ -9,26 +9,35 @@
 {% block content %}
 <div class="container">
     <h1 class="title">Tus publicaciones</h1>
-    {% for inmueble in inmuebles %}
-    <div class="inmueble">
-        {% if inmueble.imagenes.all %}
-            <img src="{{ inmueble.imagenes.first.imagen.url }}" alt="Imagen del inmueble">
-        {% else %}
-            <img src="{% static 'images/load-default.jpg' %}" alt="Imagen no disponible">
-        {% endif %}
-        <div class="info">
-            <h3>{{ inmueble.tipo_inmueble }} MXN {{ inmueble.precio }}</h3>
-            <p>{{ inmueble.descripcion }}</p>
-        </div>
-        <div class="actions">
-            <a href="{% url 'editar_inmueble' inmueble.id %}" class="btn-blue">Editar</a>
-            <button onclick="confirmDelete({{ inmueble.id }})" class="btn-red">Eliminar</button>
-           
-        </div>
-    </div>
-    {% empty %}
-    <p>No tienes publicaciones aún.</p>
-    {% endfor %}
+    {% if inmuebles %}
+        {% for inmueble in inmuebles %}
+            <div class="inmueble">
+                {% if inmueble.imagenes.all %}
+                    <img src="{{ inmueble.imagenes.first.imagen.url }}" alt="Imagen del inmueble">
+                {% else %}
+                    <img src="{% static 'images/load-default.jpg' %}" alt="Imagen no disponible">
+                {% endif %}
+                <div class="info">
+                    <h3>{{ inmueble.tipo_inmueble }} MXN {{ inmueble.precio }}</h3>
+                    <p>{{ inmueble.descripcion }}</p>
+                </div>
+                <div class="actions">
+                    <a href="{% url 'editar_inmueble' inmueble.id %}" class="btn-blue">Editar</a>
+                    <button onclick="confirmDelete({{ inmueble.id }})" class="btn-red">Eliminar</button>
+
+                    <!-- Mostrar "Volver a Publicar" si el inmueble ya está rentado -->
+                    {% if inmueble.estado == 'rentado' %}
+                        <form action="{% url 'volver_a_publicar' inmueble.id %}" method="post">
+                            {% csrf_token %}
+                            <button type="submit" class="btn btn-secondary">Volver a Publicar</button>
+                        </form>
+                    {% endif %}
+                </div>
+            </div>
+        {% endfor %}
+    {% else %}
+        <p>No tienes publicaciones aún.</p>
+    {% endif %}
 </div>
 
 <!-- Modal de Confirmación -->

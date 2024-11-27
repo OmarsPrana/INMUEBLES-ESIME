@@ -8,14 +8,16 @@ body {
 }
 
 .detail-container {
-    max-width: 1400px;
-    margin: 150px auto;
+
+    max-width: 100%;
+    width: 1550px;
     height: 570px;
     background: #fff;
-    padding: 20px;
+    padding: 40px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
     border-radius: 8px;
     display: flex;
+    margin: 0 auto;    /* Centra el contenedor */
     gap: 20px;
 }
 
@@ -141,7 +143,7 @@ body {
             background: #ffffff;
             margin: 0 0 25px;
             height: 220px;
-            width: 600px;
+            width: 750px;
             border-radius: 20px;
             border: 0.1px solid #000;
             overflow: hidden;
@@ -158,7 +160,7 @@ body {
                 background: #ffffff;
                 margin: 0 0 25px;
                 height: auto;
-                width: 600px;
+                width: 750px;
                 border-radius: 20px;
                 border: 0.1px solid #000;
                 overflow: hidden;
@@ -189,15 +191,21 @@ body {
 
 /* Botón de WhatsApp */
 .whatsapp {
+    position: relative;
+    top: -122px;   /* Empuja hacia abajo desde su posición original */
+    left: 0px;
+    width: 200px;
+    height: 30px;
     background-color: #25d366;
-    color: white;
-    border: none;
+    color: #fff;
+    border: 2px solid #25d366; 
+    
 }
 
 .whatsapp:hover {
-    background-color: #1da955;
+    background-color: #fff;
+    color: #25d366;
 }
-
 /* Botón de Reservar */
 .reservar-btn {
     background-color: #007bff;
@@ -210,26 +218,60 @@ body {
 }
 
 /* Botón de Calificar */
-.calificar {
+.btn-secondary {
+    position: relative;
+    top: -122px;   /* Empuja hacia abajo desde su posición original */
+    left: -1275px;
+    width: 200px;
+    height: 30px;
     background-color: #f45c43;
-    color: white;
-    border: none;
+    color: #fff;
+    border: 2px solid #f45c43;
 }
 
-.calificar:hover {
-    background-color: #d93725;
+.btn-secondary:hover {
+    background-color: #fff;
+    color: #f45c43;
 }
+
+
+
+
+
+
+
 
 /* Botón de Ver Comentarios */
-.comentarios-btn {
-    background-color: #ffc107;
-    color: white;
-    border: none;
+#btnComentarios {
+    position: relative;
+    top: -176px;   /* Empuja hacia abajo desde su posición original */
+    left: 270px;
+    color: rgb(0, 0, 0); /* Texto blanco */
+    padding: 10px 20px; /* Espaciado interno */
+    border: none; /* Sin borde */
+    border-radius: 8px; /* Bordes redondeados */
+    cursor: pointer; /* Cambia el cursor al pasar sobre el botón */
+    font-size: 16px; /* Tamaño de fuente */ 
+    text-align: center;
+    transition: background-color 0.3s ease, color 0.3s ease;
+    width: 244px;
+    height: 54px;
 }
 
-.comentarios-btn:hover {
-    background-color: #e0a800;
+
+
+
+
+ 
+
+
+
+#btnComentarios:hover {
+    background-color: #636363; /* Azul más oscuro al pasar el mouse */
 }
+
+
+
 
 /* Modal */
 .modal {
@@ -254,14 +296,25 @@ body {
     text-align: center;
 }
 
-.close {
-    color: #aaa;
-    float: right;
-    font-size: 28px;
-    font-weight: bold;
-    cursor: pointer;
+.buttons button {
+    position: relative;
+    top: -122px;   /* Empuja hacia abajo desde su posición original */
+    left: 280px;
+    background-color: #007bff;
+    color: #fff;
+    border: 2px solid #007bff; 
+    padding: 10px 20px; /* Espaciado interno */
+    border-radius: 8px; /* Bordes redondeados */
+    cursor: pointer; /* Cambia el cursor al pasar sobre el botón */
+    font-size: 16px; /* Tamaño de fuente */ 
+    text-align: center;
+    transition: background-color 0.3s ease, color 0.3s ease;
+    width: 244px;
+    height: 54px;
 }
 
-.close:hover {
-    color: #000;
+.buttons button:hover  {
+    background-color: #ffffff;
+    color: #007bff;
+  
 }

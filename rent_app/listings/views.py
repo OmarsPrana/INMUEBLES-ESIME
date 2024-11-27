@@ -22,7 +22,7 @@ import stripe
 import json
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
-
+from django.contrib.auth.models import AnonymousUser
 
 stripe.api_key = config('STRIPE_SECRET_KEY')
 endpoint_secret = config('STRIPE_WEBHOOK_SECRET')
@@ -87,9 +87,11 @@ def logout_and_redirect_mis_inmuebles(request):
     logout(request)  # Cerrar sesión del usuario
     return redirect('mis_inmuebles')  # Redirigir a la página de "Mis inmuebles"
 
+@login_required
 def detalle_inmueble(request, inmueble_id):
     inmueble = get_object_or_404(Inmueble, id=inmueble_id)
     comentarios = inmueble.comentarios.all()
+  
 
     if request.method == 'POST':
         comentario_form = CalificacionForm(request.POST)
@@ -128,14 +130,12 @@ def perfil(request):
 
 @login_required
 def inmuebles_rentados(request):
+    usuario = request.user
+    
+    reservas_rentadas = Reserva.objects.filter(usuario=usuario, estado_pago=True)
+    return render(request, 'inmuebles_rentados.html', {'reservas_rentadas': reservas_rentadas})
     # Filtrar los inmuebles que el usuario ha rentado con el pago completado
-    reservas_rentadas = Reserva.objects.filter(usuario=request.user, estado_pago=True)
-
-    # Pasar las reservas al template para mostrarlas
-    context = {
-        'reservas_rentadas': reservas_rentadas
-    }
-    return render(request, 'inmuebles_rentados.html', context)
+   
 @login_required
 def editar_perfil(request):
     if request.method == 'POST':
@@ -265,11 +265,12 @@ def publicar_inmueble(request):
 
     return render(request, 'publicar_inmueble.html', {'inmueble_form': inmueble_form})
 
-
+@login_required
 def inmueble_detalle(request, inmueble_id):
     # Obtén el inmueble
     inmueble = get_object_or_404(Inmueble, id=inmueble_id)
     
+
     # Obtén las calificaciones asociadas al inmueble
     comentarios = Calificacion.objects.filter(inmueble=inmueble)
     
@@ -420,22 +421,31 @@ endpoint_secret = config('STRIPE_WEBHOOK_SECRET')
 @csrf_exempt
 def stripe_webhook(request):
     if request.method != 'POST':
-        return HttpResponse(status=405)  # Método no permitido
+        return HttpResponse(status=405)
 
     payload = request.body
     sig_header = request.META.get('HTTP_STRIPE_SIGNATURE')
     event = None
 
     try:
+        # Construir el evento verificando la firma con el endpoint_secret
         event = stripe.Webhook.construct_event(
-            payload, sig_header, config('STRIPE_WEBHOOK_SECRET')
+            payload, sig_header, endpoint_secret, tolerance=600  # 10 minutos de tolerancia
         )
-    except ValueError:
+    except ValueError as e:
+        print("Invalid payload")
         return JsonResponse({'error': 'Invalid payload'}, status=400)
-    except stripe.error.SignatureVerificationError:
+    except stripe.error.SignatureVerificationError as e:
+        print("Invalid signature")
         return JsonResponse({'error': 'Invalid signature'}, status=400)
+    except Exception as e:
+        print(f"Unexpected error: {str(e)}")
+        return JsonResponse({'error': 'Unexpected error'}, status=400)
 
-    # Manejar evento `checkout.session.completed`
+    # Imprimir el tipo de evento recibido para confirmar que llegó correctamente
+    print(f"Evento recibido: {event['type']}")
+
+    # Manejar el evento específico `checkout.session.completed`
     if event['type'] == 'checkout.session.completed':
         session = event['data']['object']
 
@@ -443,18 +453,31 @@ def stripe_webhook(request):
         usuario_id = session.get('metadata', {}).get('usuario_id')
         inmueble_id = session.get('metadata', {}).get('inmueble_id')
 
+        # Imprimir información de depuración
+        print(f"Metadata recibida - Usuario ID: {usuario_id}, Inmueble ID: {inmueble_id}")
+
         if usuario_id and inmueble_id:
             try:
-                # Buscar la reserva correspondiente y actualizar el estado del pago
                 usuario = User.objects.get(id=usuario_id)
                 inmueble = Inmueble.objects.get(id=inmueble_id)
-                
-                # Buscar la reserva y actualizar el estado de pago
-                reserva = Reserva.objects.filter(usuario=usuario, inmueble=inmueble, estado_pago=False).latest('fecha_reserva')
-                reserva.estado_pago = True
-                reserva.save()
-                print(f"Reserva actualizada: {reserva}")
-            except (User.DoesNotExist, Inmueble.DoesNotExist, Reserva.DoesNotExist) as e:
-                print(f"Error al buscar la reserva: {str(e)}")
+
+                # Actualizar la reserva que tiene estado_pago=False a True
+                reserva = Reserva.objects.filter(usuario=usuario, inmueble=inmueble, estado_pago=False).first()
+
+                if reserva:
+                    reserva.estado_pago = True
+                    reserva.save()
+                    inmueble.estado = 'rentado'
+                    inmueble.save()
+                    print(f"Reserva actualizada con éxito: {reserva}")
+                else:
+                    print(f"No se encontró una reserva para actualizar - Usuario ID: {usuario_id}, Inmueble ID: {inmueble_id}")
+
+            except User.DoesNotExist:
+                print(f"Usuario con ID {usuario_id} no existe")
+            except Inmueble.DoesNotExist:
+                print(f"Inmueble con ID {inmueble_id} no existe")
+            except Exception as e:
+                print(f"Error inesperado al actualizar la reserva: {str(e)}")
 
     return JsonResponse({'status': 'success'}, status=200)

@@ -1,14 +1,18 @@
 {% extends 'base.html' %}
+{% load static %}
 {% block title %}Pago Exitoso{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/pagoex.css' %}">
+{% endblock %}
+
 
 {% block content %}
 <div class="container text-center mt-5">
     <h1>¡Pago Exitoso!</h1>
     <p>Gracias por tu compra. Hemos recibido tu pago correctamente.</p>
-    <p>Puedes revisar los detalles en tu correo electrónico.</p>
+
     <a href="/" class="btn btn-primary">Volver al Inicio</a>
-    <p class="mt-3">
-        Si tienes alguna duda, <a href="/contacto/">contáctanos</a>.
-    </p>
+  
 </div>
 {% endblock %}

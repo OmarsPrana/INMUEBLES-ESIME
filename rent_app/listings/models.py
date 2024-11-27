@@ -16,6 +16,7 @@ class Inmueble(models.Model):
         ('5-10 km', '5-10 km'),
         ('10-15 km', '10-15 km'),
     ]
+    
     usuario = models.ForeignKey(User, on_delete=models.CASCADE, related_name='inmuebles')
     
 
